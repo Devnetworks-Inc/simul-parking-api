@@ -33,11 +33,6 @@ class BaseAPIService {
     return this._clean(doc);
   }
 
-  async createMany(dataArray) {
-    const docs = await this.model.insertMany(dataArray);
-    return docs.map(this._clean);
-  }
-
   async update(id, data) {
     const updated = await this.model.findByIdAndUpdate(id, data, {
       new: true
@@ -46,11 +41,7 @@ class BaseAPIService {
   }
 
   async delete(id) {
-    const result = await this.model.findByIdAndUpdate(
-      id,
-      { isArchived: true },
-      { new: true }
-    );
+    const result = await this.model.delete(id);
     return !!result;
   }
 

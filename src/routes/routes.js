@@ -1,4 +1,3 @@
-const { authRoutes } = require('../features/auth/router/auth.router');
 const { healthRoutes } = require('./health-routes');
 
 const BASE_PATH = '/api';
@@ -6,7 +5,7 @@ const BASE_PATH = '/api';
 module.exports = (app) => {
   const routes = () => {
     useHealthRoutes(app);
-    app.use(`${BASE_PATH}/auth`, authRoutes)
+    // app.use(`${BASE_PATH}/book`, authRoutes)
   };
   routes();
 };
