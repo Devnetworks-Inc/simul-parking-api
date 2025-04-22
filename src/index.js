@@ -4,11 +4,10 @@ const { ServerSetup } = require('./setup/server');
 const http = require('http');
 const { errorHandler } = require('./libs/core/error/error-handler');
 const MongoDB = require('./libs/database/db');
-const https = require('https');
 
 const app = express();
 const server = http.createServer(app);
-const SERVER_PORT = 6000;
+const SERVER_PORT = 5000;
 
 class Application {
   initialize() {
@@ -31,22 +30,6 @@ class Application {
     console.log(`Worker with process id of ${process.pid} has started...`);
     server.listen(SERVER_PORT, () => {
       console.log(`Server running on port ${SERVER_PORT}`);
-  
-      // Fetch public IP address
-      https.get('https://api.ipify.org?format=json', (res) => {
-        let data = '';
-        res.on('data', chunk => data += chunk);
-        res.on('end', () => {
-          try {
-            const ip = JSON.parse(data).ip;
-            console.log(`Public IP Address: ${ip}`);
-          } catch (err) {
-            console.error('Failed to parse public IP response:', err);
-          }
-        });
-      }).on('error', (err) => {
-        console.error('Error fetching public IP address:', err);
-      });
     });
   
     process.on('unhandledRejection', (reason) => {
