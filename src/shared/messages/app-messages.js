@@ -3,7 +3,7 @@ const APP_MESSAGES = {
   MONGO_DISCONNECTED: 'Disconnected from MongoDB database',
   MONGO_CONNECTION_FAILED: 'Failed to connect to MongoDB database',
   MONGO_DISCONNECTION_FAILED: 'Error disconnecting from MongoDB database:',
-  USER_NOT_FOUND: 'User not found',
+  BOOKING_NOT_FOUND: 'Booking not found',
   INVALID_EMAIL: 'Invalid email',
   PASSWORD_UPDATED_SUCCESSFULLY: 'Password updated successfully',
   EMAIL_ALREADY_EXISTS: 'Email already exists'
