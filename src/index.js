@@ -7,7 +7,7 @@ const MongoDB = require('./libs/database/db');
 
 const app = express();
 const server = http.createServer(app);
-const SERVER_PORT = 5000;
+const SERVER_PORT = 8080;
 
 class Application {
   initialize() {

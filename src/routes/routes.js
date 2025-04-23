@@ -1,3 +1,4 @@
+const { authRoutes } = require('../features/auth/router/auth.router');
 const { bookingRoutes } = require('../features/booking/router/booking.router');
 const { healthRoutes } = require('./health-routes');
 
@@ -7,6 +8,7 @@ module.exports = (app) => {
   const routes = () => {
     useHealthRoutes(app);
     app.use(`${BASE_PATH}/booking`, bookingRoutes)
+    app.use(`${BASE_PATH}/auth`, authRoutes)
   };
   routes();
 };

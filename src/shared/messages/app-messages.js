@@ -6,7 +6,8 @@ const APP_MESSAGES = {
   BOOKING_NOT_FOUND: 'Booking not found',
   INVALID_EMAIL: 'Invalid email',
   PASSWORD_UPDATED_SUCCESSFULLY: 'Password updated successfully',
-  EMAIL_ALREADY_EXISTS: 'Email already exists'
+  EMAIL_ALREADY_EXISTS: 'Email already exists',
+  USER_NOT_FOUND: "User Not Found"
 };
 
 Object.freeze(APP_MESSAGES);

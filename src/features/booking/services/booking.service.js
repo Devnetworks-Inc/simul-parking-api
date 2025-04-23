@@ -1,8 +1,8 @@
 const BaseAPIService = require('../../../shared/services/base-api.service');
 const { BookingAdapter } = require('../adapters/booking-adapter');
-const { NotAuthorizedError } = require('../../../libs/core/error/custom-error');
 const APP_MESSAGES = require('../../../shared/messages/app-messages');
 const { BookingDetailsEntity } = require('../schemas/booking.entity');
+const { BadRequestError } = require('../../../libs/core/error/custom-error');
 
 class BookingService {
     constructor() {
@@ -26,7 +26,7 @@ class BookingService {
 
     async updateBooking(id, model) {
         const existing = await BookingDetailsEntity.findById(id);
-        if (!existing) throw new NotAuthorizedError(APP_MESSAGES.BOOKING_NOT_FOUND);
+        if (!existing) throw new BadRequestError(APP_MESSAGES.BOOKING_NOT_FOUND);
 
         const updated = this._adapter.adaptToExisting(model, existing);
         return await this._baseService.update(id, updated);
@@ -34,7 +34,7 @@ class BookingService {
 
     async deleteBooking(id) {
         const result = await BookingDetailsEntity.findById(id);
-        if (!result) throw new NotAuthorizedError(APP_MESSAGES.BOOKING_NOT_FOUND);
+        if (!result) throw new BadRequestError(APP_MESSAGES.BOOKING_NOT_FOUND);
 
         return await this._baseService.delete(id);
     }
