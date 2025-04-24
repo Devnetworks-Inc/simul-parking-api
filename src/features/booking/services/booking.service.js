@@ -15,7 +15,30 @@ class BookingService {
     }
 
     async getAll(filter = {}) {
-        return await this._baseService.getAll(filter);
+        const {
+            page = 1,
+            limit = 10,
+            startDate,
+            endDate,
+            ...queryFilters
+        } = filter;
+
+        const skip = (page - 1) * limit;
+
+        const mongoQuery = { ...queryFilters };
+
+        if (startDate || endDate) {
+            mongoQuery.startDate = {};
+            if (startDate) {
+                mongoQuery.startDate.$gte = new Date(startDate);
+            }
+            if (endDate) {
+                mongoQuery.startDate.$lte = new Date(endDate);
+            }
+        }
+
+        const data = await this._baseService.getAllWithPagination(mongoQuery, skip, parseInt(limit));
+        return data;
     }
 
     async createBooking(model) {

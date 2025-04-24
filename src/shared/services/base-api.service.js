@@ -28,6 +28,18 @@ class BaseAPIService {
     return this.model.findById(id, null, options).lean();
   }
 
+  async getAllWithPagination(filter, skip, limit) {
+    const results = await this.model.find(filter).skip(skip).limit(limit);
+    const total = await this.model.countDocuments(filter);
+
+    return {
+      data: results,
+      total,
+      page: Math.ceil(skip / limit) + 1,
+      pageSize: limit
+    };
+  }
+
   async create(data) {
     const doc = await this.model.create(data);
     return this._clean(doc);
