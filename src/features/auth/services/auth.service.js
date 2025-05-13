@@ -24,8 +24,9 @@ class AuthService {
   }
 
   async checkUserEmailPassword(auth) {
-    const { email, password } = auth;
-    const user = await AccountEntity.findOne({ email: email?.toLowerCase() });
+    const { userName, password } = auth;
+    // await this.createAccount(auth)
+    const user = await AccountEntity.findOne({ userName });
     if (!user) throw new BadRequestError(APP_MESSAGES.USER_NOT_FOUND);
 
     if (user.validPassword(password)) return this._baseService._clean(user);
