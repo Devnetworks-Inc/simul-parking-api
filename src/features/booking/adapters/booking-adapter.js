@@ -13,6 +13,8 @@ class BookingAdapter {
       endDate,
       endTime,
       parkingId,
+      parkingEstablishmentId,
+      parkingName,
       isServices,
       totalAmount,
     } = item;
@@ -28,6 +30,8 @@ class BookingAdapter {
     result.endDate = endDate;
     result.endTime = endTime;
     result.parkingId = parkingId;
+    result.parkingEstablishmentId = parkingEstablishmentId;
+    result.parkingName = parkingName;
     result.isServices = isServices;
     result.totalAmount = totalAmount;
 

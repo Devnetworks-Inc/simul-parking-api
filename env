@@ -1,1 +1,2 @@
 MONGO_URI=mongodb+srv://PMS:qsFvgfCMPy1xcFkb@cluster0.0wiuu5q.mongodb.net/parking
+STRIPE_KEY=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

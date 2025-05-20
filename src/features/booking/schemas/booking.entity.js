@@ -51,6 +51,14 @@ const BookingSchema = new mongoose.Schema(
       type: Number,
       default: 0,
       require: true
+    },
+    parkingEstablishmentId: {
+      type: String,
+      required: true
+    },
+    parkingName: {
+      type: String,
+      required: true
     }
   },
   {

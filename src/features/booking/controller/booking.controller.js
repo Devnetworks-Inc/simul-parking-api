@@ -4,6 +4,9 @@ const APP_MESSAGES = require("../../../shared/messages/app-messages");
 const { BookingService } = require("../services/booking.service");
 const { BookingAdapter } = require("../adapters/booking-adapter");
 const { bookingSchema } = require("../validations/booking.validation");
+const { config } = require('../../../configs/config');
+// const stripe = require('stripe')(config.STRIPE_KEY)
+const stripe = require('stripe')('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')
 
 class BookingController {
     constructor() {
@@ -27,11 +30,63 @@ class BookingController {
     async create(req, res) {
         const bookingModel = req.body;
 
-        const { error } = bookingSchema.validate(bookingModel);
+        const forValidationModel = { ...bookingModel };
+        //exclude fields for validation
+        delete forValidationModel.parkingEstablishmentId;
+        delete forValidationModel.parkingName;
+        delete forValidationModel.successRoute;
+        delete forValidationModel.cancelRoute;
+        const { error } = bookingSchema.validate(forValidationModel);
         if (error) throw new Error(error.details[0].message);
 
         const created = await this._service.createBooking(bookingModel);
+        const checkout = {
+            currency: 'chf',
+            product: `Simul Parking: ${bookingModel.firstName} ${bookingModel.lastName} booked parking space at ${bookingModel.parkingName}(${bookingModel.parkingEstablishmentId})`,
+            amount: bookingModel.totalAmount,
+            quantity: 1,
+            success_route: encodeURI(bookingModel.successRoute),
+            cancel_route: encodeURI(bookingModel.cancelRoute),
+            metadata: {
+                booking_id: created._id.toString(),
+                product_service: 'SIMUL_PARKING_SPACE_BOOKING'
+            }
+        }
+        const session = await createStripeCheckoutSession(checkout, req);
         this._responseHandler.sendCreated(res, created);
+    }
+
+    async createStripeCheckoutSession( { currency, product, amount, quantity, metadata, success_route, cancel_route }, req ){
+    
+        const originUrl = req.headers.origin
+        const expiresAt = new Date(new Date().getTime() + 30 * 60000)
+        const expiresAtEpoch = Math.floor(expiresAt.getTime() / 1000)
+
+        const session = await stripe.checkout.sessions.create({
+            line_items: [
+                {
+                    price_data: {
+                        currency,
+                        product_data: {
+                            name: product,
+                        },
+                        unit_amount: amount * 100, //convert amount to cents
+                    },
+                    quantity: quantity,
+                },
+            ],
+            mode: 'payment',
+            payment_intent_data: {
+                metadata
+            },
+            metadata,
+            //The Epoch time in seconds at which the Checkout Session will expire
+            expires_at: expiresAtEpoch,
+            success_url: `${originUrl}/${success_route}?bookingId=${metadata.shuttle_booking_id}&session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${originUrl}/${cancel_route || ''}`,
+        })
+
+        return session
     }
 
     async update(req, res) {

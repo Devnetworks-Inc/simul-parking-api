@@ -42,7 +42,7 @@ const bookingSchema = Joi.object({
   totalAmount: Joi.number().required().messages({
     'number.base': 'Total amount must be a number',
     'any.required': 'Total amount is required',
-  }),
+  })
 });
 
 module.exports = { bookingSchema };
