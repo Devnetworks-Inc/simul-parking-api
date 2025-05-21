@@ -59,6 +59,11 @@ const BookingSchema = new mongoose.Schema(
     parkingName: {
       type: String,
       required: true
+    },
+    status: {
+      type: String,
+      enum: ['paid', 'processing', 'failed'],
+      default: 'processing'
     }
   },
   {
