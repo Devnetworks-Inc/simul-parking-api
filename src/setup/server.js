@@ -9,6 +9,12 @@ const HTTP_STATUS = require('http-status-codes');
 const { errorHandler } = require('../libs/core/error/error-handler');
 const { config } = require('../configs/config');
 const appRoute = require('../routes/routes');
+const { asyncHandler } = require('../libs/core/handlers/async.handler');
+const { StripeController } = require('../features/stripe/controller/stripe.controller');
+const { stripeRoutes } = require('../features/stripe/router/stripe.router');
+const { webhookRoutes } = require('../features/stripe/router/webhook.router');
+
+const stripeController = new StripeController()
 
 class ServerSetup {
   constructor(app) {
@@ -40,6 +46,7 @@ class ServerSetup {
   }
 
   _configureMiddleware(app) {
+    app.use('/api/webhook', webhookRoutes),
     app.use(compression());
     app.use(express.json({ limit: '50mb' }));
     app.use(express.urlencoded({ extended: true, limit: '50mb' }));
