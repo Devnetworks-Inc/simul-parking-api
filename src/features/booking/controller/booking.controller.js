@@ -6,7 +6,6 @@ const { BookingAdapter } = require("../adapters/booking-adapter");
 const { bookingSchema } = require("../validations/booking.validation");
 const { config } = require('../../../configs/config');
 const stripe = require('stripe')(config.STRIPE_KEY)
-// const stripe = require('stripe')('sk_live_')
 
 class BookingController {
     constructor() {
