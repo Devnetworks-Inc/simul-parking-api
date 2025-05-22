@@ -38,8 +38,9 @@ class BookingController {
         const { error } = bookingSchema.validate(forValidationModel);
         if (error) throw new Error(error.details[0].message);
 
-        const created = await this._service.createBooking(bookingModel);
+        const booking = await this._service.createBooking(bookingModel);
         const checkout = {
+            customer_email: bookingModel.email,
             currency: 'chf',
             product: `Simul Parking: ${bookingModel.firstName} ${bookingModel.lastName} booked parking space at ${bookingModel.parkingName}(${bookingModel.parkingEstablishmentId})`,
             amount: bookingModel.totalAmount,
@@ -47,21 +48,22 @@ class BookingController {
             success_route: encodeURI(bookingModel.successRoute),
             cancel_route: encodeURI(bookingModel.cancelRoute),
             metadata: {
-                booking_id: created._id.toString(),
+                booking_id: booking._id.toString(),
                 product_service: 'SIMUL_PARKING_SPACE_BOOKING'
             }
         }
-        const session = await createStripeCheckoutSession(checkout, req);
-        this._responseHandler.sendCreated(res, created);
+        const session = await this.createStripeCheckoutSession(checkout, req);
+        this._responseHandler.sendCreated(res, { sessionUrl: session.url });
     }
 
-    async createStripeCheckoutSession( { currency, product, amount, quantity, metadata, success_route, cancel_route }, req ){
-    
+    async createStripeCheckoutSession( { currency, product, amount, quantity, metadata, success_route, cancel_route, customer_email }, req ){
+
         const originUrl = req.headers.origin
         const expiresAt = new Date(new Date().getTime() + 30 * 60000)
         const expiresAtEpoch = Math.floor(expiresAt.getTime() / 1000)
 
         const session = await stripe.checkout.sessions.create({
+            customer_email,
             line_items: [
                 {
                     price_data: {
@@ -76,12 +78,12 @@ class BookingController {
             ],
             mode: 'payment',
             payment_intent_data: {
-                metadata
+                metadata,
             },
             metadata,
             //The Epoch time in seconds at which the Checkout Session will expire
             expires_at: expiresAtEpoch,
-            success_url: `${originUrl}/${success_route}?bookingId=${metadata.shuttle_booking_id}&session_id={CHECKOUT_SESSION_ID}`,
+            success_url: `${originUrl}/${success_route}?bookingId=${metadata.booking_id}&session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${originUrl}/${cancel_route || ''}`,
         })
 
