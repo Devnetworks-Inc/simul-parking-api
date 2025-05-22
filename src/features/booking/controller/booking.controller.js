@@ -5,8 +5,7 @@ const { BookingService } = require("../services/booking.service");
 const { BookingAdapter } = require("../adapters/booking-adapter");
 const { bookingSchema } = require("../validations/booking.validation");
 const { config } = require('../../../configs/config');
-// const stripe = require('stripe')(config.STRIPE_KEY)
-const stripe = require('stripe')('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')
+const stripe = require('stripe')(config.STRIPE_KEY)
 
 class BookingController {
     constructor() {
