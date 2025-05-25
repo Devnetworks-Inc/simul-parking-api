@@ -2,6 +2,7 @@ const { config } = require("../../../configs/config");
 const { NotFoundError } = require("../../../libs/core/error/custom-error");
 const APP_MESSAGES = require("../../../shared/messages/app-messages");
 const { BookingDetailsEntity } = require("../../booking/schemas/booking.entity");
+const { sendEmail } = require('../../../shared/services/email')
 const stripe = require('stripe')(config.STRIPE_KEY)
 const endpointSecret = config.STRIPE_ENDPOINT_SECRET;
 
@@ -27,6 +28,7 @@ class StripeController {
         if (booking) {
           booking.status = 'paid'
           await booking.save()
+          await sendEmail({ to: booking.email, first_name: booking.firstName, last_name: booking.lastName, booking_id: paymentIntent.metadata.booking_id });
         }
         break;
       case 'payment_intent.payment_failed':
