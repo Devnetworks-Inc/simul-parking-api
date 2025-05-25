@@ -3,7 +3,7 @@ const { NotFoundError } = require("../../../libs/core/error/custom-error");
 const APP_MESSAGES = require("../../../shared/messages/app-messages");
 const { BookingDetailsEntity } = require("../../booking/schemas/booking.entity");
 const stripe = require('stripe')(config.STRIPE_KEY)
-const endpointSecret = 'whsec_f9a89ac7cd96428d8fe2447b8399537a6800f67c18b01a29ef31cd855308a14a';
+const endpointSecret = config.STRIPE_ENDPOINT_SECRET;
 
 class StripeController {
   async webhook(request, response) {
@@ -17,10 +17,8 @@ class StripeController {
     catch (err) {
       response.status(400).send(`Webhook Error: ${err.message}`);
     }
-
     const paymentIntent = event.data.object;
     const booking = await BookingDetailsEntity.findById(paymentIntent.metadata.booking_id).exec()
-    console.log(booking)
 
     // Handle the event
     switch (event.type) {

@@ -7,6 +7,7 @@ class Config {
     this.MONGO_URI = process.env.MONGO_URI || this.DEFAULT_MONGO_URI;
     console.log(this.MONGO_URI )
     this.STRIPE_KEY = process.env.STRIPE_KEY;
+    this.STRIPE_ENDPOINT_SECRET = process.env.STRIPE_ENDPOINT_SECRET;
     this.NODE_ENV = process.env.NODE_ENV || 'dev';
     this.SECRET_KEY_ONE = process.env.SECRET_KEY_ONE || this.SECRET_KEY_ONE;
     this.SECRET_KEY_TWO = process.env.SECRET_KEY_TWO || this.SECRET_KEY_TWO;
