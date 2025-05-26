@@ -3,6 +3,7 @@ const { BookingDetailsEntity } = require("../schemas/booking.entity");
 class BookingAdapter {
   adapt(item) {
     const {
+      _id,
       firstName,
       lastName,
       email,
@@ -17,9 +18,14 @@ class BookingAdapter {
       parkingName,
       isServices,
       totalAmount,
+      bookingDate,
+      checkoutSessionId,
+      checkoutSessionPaymentDate,
+      checkoutSessionFailedDate,
+      status
     } = item;
 
-    const result = new BookingDetailsEntity();
+    const result = new BookingDetailsEntity({ _id });
     result.firstName = firstName;
     result.lastName = lastName;
     result.email = email;
@@ -34,6 +40,11 @@ class BookingAdapter {
     result.parkingName = parkingName;
     result.isServices = isServices;
     result.totalAmount = totalAmount;
+    result.bookingDate = bookingDate;
+    result.checkoutSessionId = checkoutSessionId;
+    result.checkoutSessionPaymentDate = checkoutSessionPaymentDate;
+    result.checkoutSessionFailedDate = checkoutSessionFailedDate
+    result.status = status
 
     return result;
   }

@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const BookingSchema = new mongoose.Schema(
   {
+    _id: mongoose.Types.ObjectId,
     firstName: {
       type: String,
       required: true
@@ -64,7 +65,11 @@ const BookingSchema = new mongoose.Schema(
       type: String,
       enum: ['paid', 'processing', 'failed'],
       default: 'processing'
-    }
+    },
+    bookingDate: Date,
+    checkoutSessionId: String,
+    checkoutSessionPaymentDate: Date,
+    checkoutSessionFailedDate: Date,
   },
   {
     collection: 'bookingDetail',

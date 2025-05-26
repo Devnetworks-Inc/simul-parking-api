@@ -5,6 +5,7 @@ const { BookingService } = require("../services/booking.service");
 const { BookingAdapter } = require("../adapters/booking-adapter");
 const { bookingSchema } = require("../validations/booking.validation");
 const { config } = require('../../../configs/config');
+const { default: mongoose } = require("mongoose");
 const stripe = require('stripe')(config.STRIPE_KEY)
 
 class BookingController {
@@ -38,7 +39,8 @@ class BookingController {
         const { error } = bookingSchema.validate(forValidationModel);
         if (error) throw new Error(error.details[0].message);
 
-        const booking = await this._service.createBooking(bookingModel);
+        bookingModel._id = new mongoose.Types.ObjectId();
+        
         const checkout = {
             customer_email: bookingModel.email,
             currency: 'chf',
@@ -48,11 +50,15 @@ class BookingController {
             success_route: encodeURI(bookingModel.successRoute),
             cancel_route: encodeURI(bookingModel.cancelRoute),
             metadata: {
-                booking_id: booking._id.toString(),
+                booking_id: bookingModel._id.toString(),
                 product_service: 'SIMUL_PARKING_SPACE_BOOKING'
             }
         }
+
         const session = await this.createStripeCheckoutSession(checkout, req);
+        bookingModel.checkoutSessionId = session.id
+        bookingModel.bookingDate = new Date();
+        await this._service.createBooking(bookingModel);
         this._responseHandler.sendCreated(res, { sessionUrl: session.url });
     }
 

@@ -42,6 +42,9 @@ class BookingService {
     }
 
     async createBooking(model) {
+        if (!model._id) {
+            model._id = new mongoose.Types.ObjectId();
+        }
         model.parkingId = await this.generateUniqueParkingId()
         const adapted = this._adapter.adapt(model);
         return await this._baseService.create(adapted);
