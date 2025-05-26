@@ -35,13 +35,13 @@ const sendEmail = async (message) => {
         <p>Should you need to modify your booking or have any questions, please don't hesitate to contact us.</p>
         
         <p>Safe travels,</p>
-        <p style="font-weight: bold;">The Simul Group Team</p>
+        <p style="font-weight: bold;">The Simul Parking Team</p>
       </div>
       
       <div style="background-color: #f8f8f8; padding: 20px; text-align: center; font-size: 14px; color: #666;">
         <p style="margin: 5px 0;">
-          <a href="https://simul-group.ch" style="color: #FB5801; text-decoration: none;">simul-group.ch</a> 
-          | <a href="mailto:info@simul-group.ch" style="color: #FB5801; text-decoration: none;">info@simul-group.ch</a> 
+          <a href="https://simulparking.ch" style="color: #FB5801; text-decoration: none;">simulparking.ch</a> 
+          | <a href="mailto:info@simulparking.ch" style="color: #FB5801; text-decoration: none;">info@simulparking.ch</a> 
           | +41 44 222 22 22
         </p>
         <p style="margin: 5px 0;">Pfändwiesenstrasse 15, 8152 Opfikon, Switzerland</p>
@@ -59,7 +59,7 @@ const sendEmail = async (message) => {
     });
 
     let info = await transporter.sendMail({
-        from: 'no-reply@simul-group.ch',
+        from: 'no-reply@simulparking.ch',
         to,
         subject: 'Your Simul Parking Booking Confirmation',
         html: body
