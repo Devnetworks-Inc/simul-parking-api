@@ -44,7 +44,8 @@ class ParkingService {
       const result = await ParkingEntity.findById(id);
       if (!result) throw new BadRequestError(APP_MESSAGES.PARKING_NOT_FOUND);
 
-      return await this._baseService.delete(id);
+      //return await this._baseService.delete(id);
+      return await result.deleteOne()
   }
 }
 
