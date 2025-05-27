@@ -1,0 +1,39 @@
+POST http://localhost:8080/api/parking
+Content-Type: application/json
+Bearer-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiYjllZTI5OWJmNWYxYTU5MiIsImlhdCI6MTc0ODMyNzM1NiwiZXhwIjoxNzQ5MTkxMzU2fQ.RQCUVEFPP6yXPkxDR9iH0IfwFGCyMbem-7SeWVXi1co
+
+{
+    "name": "Test Parking",
+    "rating": "5",
+    "transferTime": "5 mins",
+    "description": "description",
+    "price": 100
+}
+
+###
+GET http://localhost:8080/api/parking
+Content-Type: application/json
+Bearer-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiYjllZTI5OWJmNWYxYTU5MiIsImlhdCI6MTc0ODMyNzM1NiwiZXhwIjoxNzQ5MTkxMzU2fQ.RQCUVEFPP6yXPkxDR9iH0IfwFGCyMbem-7SeWVXi1co
+
+###
+GET http://localhost:8080/api/parking/68355d9cb9ee299bf5f1a594
+Content-Type: application/json
+Bearer-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiYjllZTI5OWJmNWYxYTU5MiIsImlhdCI6MTc0ODMyNzM1NiwiZXhwIjoxNzQ5MTkxMzU2fQ.RQCUVEFPP6yXPkxDR9iH0IfwFGCyMbem-7SeWVXi1co
+
+###
+PUT http://localhost:8080/api/parking/68355d9cb9ee299bf5f1a594
+Content-Type: application/json
+Bearer-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiYjllZTI5OWJmNWYxYTU5MiIsImlhdCI6MTc0ODMyNzM1NiwiZXhwIjoxNzQ5MTkxMzU2fQ.RQCUVEFPP6yXPkxDR9iH0IfwFGCyMbem-7SeWVXi1co
+
+{
+    "name": "Test Parking",
+    "rating": "5",
+    "transferTime": "5 mins",
+    "description": "description",
+    "price": 10
+}
+
+###
+DELETE http://localhost:8080/api/parking/68355d9cb9ee299bf5f1a594
+Content-Type: application/json
+Bearer-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiYjllZTI5OWJmNWYxYTU5MiIsImlhdCI6MTc0ODMyNzM1NiwiZXhwIjoxNzQ5MTkxMzU2fQ.RQCUVEFPP6yXPkxDR9iH0IfwFGCyMbem-7SeWVXi1co

@@ -62,8 +62,9 @@ const sendEmail = async (message) => {
         from: 'no-reply@simulparking.ch',
         to,
         subject: 'Your Simul Parking Booking Confirmation',
-        html: body
-        // text: text && text,
+        html: body,
+        text: `Dear ${first_name || last_name || 'Valued Customer'},
+          We're pleased to confirm your shuttle booking with Simul Group.`
         // html: html && html,
         // attachments: attachments && attachments
     });
