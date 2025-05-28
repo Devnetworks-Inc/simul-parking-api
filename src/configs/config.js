@@ -11,6 +11,7 @@ class Config {
     this.EMAIL_USERNAME = process.env.EMAIL_USERNAME;
     this.EMAIL_PASSWORD = process.env.EMAIL_PASSWORD;
     this.CLIENT_URL = process.env.CLIENT_URL;
+    this.PORT = process.env.PORT;
     this.NODE_ENV = process.env.NODE_ENV || 'dev';
     this.SECRET_KEY_ONE = process.env.SECRET_KEY_ONE || this.SECRET_KEY_ONE;
     this.SECRET_KEY_TWO = process.env.SECRET_KEY_TWO || this.SECRET_KEY_TWO;

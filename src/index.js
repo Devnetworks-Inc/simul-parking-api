@@ -4,10 +4,10 @@ const { ServerSetup } = require('./setup/server');
 const http = require('http');
 const { errorHandler } = require('./libs/core/error/error-handler');
 const MongoDB = require('./libs/database/db');
+const { config } = require("./configs/config");
 
 const app = express();
 const server = http.createServer(app);
-const SERVER_PORT = 8080;
 
 class Application {
   initialize() {
@@ -28,8 +28,8 @@ class Application {
 
   _startHttpServer() {
     console.log(`Worker with process id of ${process.pid} has started...`);
-    server.listen(SERVER_PORT, () => {
-      console.log(`Server running on port ${SERVER_PORT}`);
+    server.listen(config.PORT, () => {
+      console.log(`Server running on port ${config.PORT}`);
     });
   
     process.on('unhandledRejection', (reason) => {
