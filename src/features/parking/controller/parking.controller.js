@@ -9,6 +9,7 @@ class ParkingController {
     constructor() {
         this._service = new ParkingService();
         this._responseHandler = new ResponseHandler();
+        this._adapter = new ParkingAdapter();
     }
 
     async getAll(req, res) {
@@ -36,7 +37,7 @@ class ParkingController {
 
     async update(req, res) {
         const id = req.params.id;
-        const updatedData = req.body;
+        const updatedData = this._adapter.adaptAsObject(req.body);
 
         const { error } = parkingSchema.validate(updatedData);
         if (error) throw new Error(error.details[0].message);

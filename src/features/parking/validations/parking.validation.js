@@ -28,6 +28,10 @@ const parkingSchema = Joi.object({
     'array.base': 'tags must be an array of strings',
     'string.base': 'each amenity must be a string',
   }),
+  address: Joi.string().required().messages({
+    'any.required': 'price is a required field',
+  }),
+  img: Joi.string()
 });
 
 module.exports = { parkingSchema };
