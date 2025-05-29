@@ -7,6 +7,10 @@ const parkingSchema = new mongoose.Schema(
       type: String,
       required: true
     },
+    address: {
+      type: String,
+      required: true
+    },
     rating: {
       type: String,
       required: false

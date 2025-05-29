@@ -9,7 +9,8 @@ class ParkingAdapter {
       description,
       img,
       price,
-      tags
+      tags,
+      address
     } = item;
 
     const result = new ParkingEntity();
@@ -21,6 +22,7 @@ class ParkingAdapter {
     result.img = img;
     result.price = price;
     result.tags = tags;
+    result.address = address
 
     return result;
   }
@@ -33,8 +35,35 @@ class ParkingAdapter {
     model.img = item.img ?? model.img;
     model.price = item.price ?? model.price;
     model.tags = item.tags ?? model.tags;
+    model.address = item.address ?? model.address;
 
     return model;
+  }
+
+  adaptAsObject(item) {
+    const {
+      name,
+      rating,
+      transferTime,
+      description,
+      img,
+      price,
+      tags,
+      address
+    } = item;
+
+    const result = {};
+
+    result.name = name;
+    result.rating = rating;
+    result.transferTime = transferTime;
+    result.description = description;
+    result.img = img;
+    result.price = price;
+    result.tags = tags;
+    result.address = address
+
+    return result;
   }
 }
 
