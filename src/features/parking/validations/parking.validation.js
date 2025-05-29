@@ -29,7 +29,7 @@ const parkingSchema = Joi.object({
     'string.base': 'each amenity must be a string',
   }),
   address: Joi.string().required().messages({
-    'any.required': 'price is a required field',
+    'any.required': 'address is a required field',
   }),
   img: Joi.string()
 });
