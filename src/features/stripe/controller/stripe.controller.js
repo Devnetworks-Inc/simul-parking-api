@@ -17,12 +17,14 @@ class StripeController {
     }
     catch (err) {
       response.status(400).send(`Webhook Error: ${err.message}`);
+      return;
     }
 
     const session = event?.data?.object;
 
-    if (session?.metadata?.product_service !== 'SIMUL_PARKING_SPACE_BOOKING') {
+    if (!(session?.metadata?.product_service) || session.metadata.product_service !== 'SIMUL_PARKING_SPACE_BOOKING') {
       response.json({ received: true })
+      return;
     }
 
     // Handle the event
