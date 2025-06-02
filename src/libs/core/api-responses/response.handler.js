@@ -24,7 +24,7 @@ class ResponseHandler {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(response);
   }
 
-  sendDynamicError(res, errorMessage) {
+  sendDynamicError(res, errorMessage, statusCode) {
     let response;
     if (typeof errorMessage === 'string') {
       response = {
@@ -39,7 +39,7 @@ class ResponseHandler {
         error: errorMessage.message
       };
     }
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(response);
+    res.status(statusCode || StatusCodes.INTERNAL_SERVER_ERROR).json(response);
   }
 
   // Send a resource created response

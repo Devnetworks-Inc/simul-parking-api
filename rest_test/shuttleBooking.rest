@@ -1,0 +1,28 @@
+POST http://localhost:8080/api/shuttle-booking
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiYjllZTI5OWJmNWYxYTU5MiIsImlhdCI6MTc0ODMyNzM1NiwiZXhwIjoxNzQ5MTkxMzU2fQ.RQCUVEFPP6yXPkxDR9iH0IfwFGCyMbem-7SeWVXi1co
+
+{
+    "firstName": "Test",
+    "lastName": "Test",
+    "pickupAddress": "Test",
+    "pickupDatetime": "2025-06-02T02:55:23.087Z",
+    "price": 100,
+    "seats": 6,
+    "parkingBookingId": "6825f5b8518a27b60513b193"
+}
+
+###
+PUT http://localhost:8080/api/shuttle-booking/683d726c0c0f92607bb45234
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiYjllZTI5OWJmNWYxYTU5MiIsImlhdCI6MTc0ODMyNzM1NiwiZXhwIjoxNzQ5MTkxMzU2fQ.RQCUVEFPP6yXPkxDR9iH0IfwFGCyMbem-7SeWVXi1co
+
+{
+    "firstName": "Test",
+    "lastName": "Test",
+    "pickupAddress": "Test",
+    "pickupDatetime": "2025-06-02T02:55:23.087Z",
+    "price": 500,
+    "seats": 6,
+    "parkingBookingId": "6825f5b8518a27b60513b193"
+}
