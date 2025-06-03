@@ -1,6 +1,5 @@
 const { ResponseHandler } = require("../../../libs/core/api-responses/response.handler");
 const { BookingDetailsEntity } = require("../../booking/schemas/booking.entity");
-const { ParkingEntity } = require("../../parking/schemas/parking.entity");
 const { ShuttleBookingEntity } = require("../schemas/shuttleBooking.entity");
 
 class ShuttleBookingController {
@@ -35,6 +34,34 @@ class ShuttleBookingController {
     }
 
     this._responseHandler.sendUpdated(res, shuttleBooking);
+  }
+
+  async getById(req, res) {
+    const { id } = req.params
+
+    const shuttleBooking = await ShuttleBookingEntity.findById(id);
+    if (!shuttleBooking) {
+      this._responseHandler.sendDynamicError(res, "Shuttle Booking does not exist", 404)
+      return;
+    }
+
+    this._responseHandler.sendSuccess(res, shuttleBooking);
+  }
+
+  async getAll(req, res) {
+    const shuttleBookings = await ShuttleBookingEntity.find().exec();
+    this._responseHandler.sendSuccess(res, shuttleBookings);
+  }
+
+  async delete(req, res) {
+
+    const shuttleBooking = await ShuttleBookingEntity.findOneAndDelete({ _id: req.params.id });
+    if (!shuttleBooking) {
+      this._responseHandler.sendDynamicError(res, "Shuttle Booking does not exist", 404)
+      return;
+    }
+
+    this._responseHandler.sendSuccess(res, shuttleBooking);
   }
 }
 

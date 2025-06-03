@@ -1,10 +1,8 @@
 const { Router } = require('express');
 const { asyncHandler } = require('../../../libs/core/handlers/async.handler');
 const { ShuttleBookingController } = require('../controller/shuttleBooking.controller');
-const { bookingSchema } = require('../../booking/validations/booking.validation');
 const { validateRequest } = require('../../../middleware/validateRequest');
 const { shuttleBookingSchema, idParamSchema } = require('../validations/shuttleBooking.validation');
-const { ObjectIdParamSchema } = require('../../../shared/schema');
 
 const controller = new ShuttleBookingController();
 const router = Router();
@@ -17,6 +15,7 @@ router
   )
    .get(
     '/:id',
+    validateRequest({ paramsSchema: idParamSchema }),
     asyncHandler(async (req, res) => controller.getById(req, res))
   )
   .get(
@@ -32,6 +31,7 @@ router
 
   .delete(
     '/:id',
+    validateRequest({ paramsSchema: idParamSchema }),
     asyncHandler(async (req, res) => controller.delete(req, res))
   );
   
