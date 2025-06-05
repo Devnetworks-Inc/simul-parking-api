@@ -4,6 +4,8 @@ const APP_MESSAGES = require("../../../shared/messages/app-messages");
 const { ParkingService } = require("../services/parking.service");
 const { ParkingAdapter } = require("../adapters/parking-adapter");
 const { parkingSchema } = require("../validations/parking.validation");
+const { ParkingEntity } = require("../schemas/parking.entity");
+const { ShuttleBookingEntity } = require("../../shuttleBooking/schemas/shuttleBooking.entity");
 
 class ParkingController {
     constructor() {
@@ -15,7 +17,15 @@ class ParkingController {
     async getAll(req, res) {
         const filter = req.query || {};
         const data = await this._service.getAll(filter);
-        this._responseHandler.sendSuccess(res, data);
+
+        const updatedData = await Promise.all(
+            data.map((d) => new Promise(async (resolve) => {
+                const shuttleBookings = await ShuttleBookingEntity.find({ parkingId: d._id })
+                resolve({...d, shuttleBookings})
+            }))
+        )
+
+        this._responseHandler.sendSuccess(res, updatedData);
     }
 
     async getById(req, res) {

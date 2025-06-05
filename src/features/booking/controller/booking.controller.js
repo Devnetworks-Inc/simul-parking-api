@@ -1,3 +1,4 @@
+const { differenceInDays } = require("date-fns")
 const { ResponseHandler } = require("../../../libs/core/api-responses/response.handler");
 const { NotFoundError } = require("../../../libs/core/error/custom-error");
 const APP_MESSAGES = require("../../../shared/messages/app-messages");
@@ -6,6 +7,7 @@ const { BookingAdapter } = require("../adapters/booking-adapter");
 const { bookingSchema } = require("../validations/booking.validation");
 const { config } = require('../../../configs/config');
 const { default: mongoose } = require("mongoose");
+const { ParkingEntity } = require("../../parking/schemas/parking.entity");
 const stripe = require('stripe')(config.STRIPE_KEY)
 
 class BookingController {
@@ -39,13 +41,24 @@ class BookingController {
         const { error } = bookingSchema.validate(forValidationModel);
         if (error) throw new Error(error.details[0].message);
 
+        const { endDate, startDate, parkingEstablishmentId } = bookingModel
+
+        const parking = await ParkingEntity.findById(parkingEstablishmentId)
+        if (!parking) {
+            this._responseHandler.sendDynamicError(res, "Parking Establishment does not exist", 404)
+            return;
+        }
+
+        const days = differrenceInDays(endDate, startDate) + 1
+        const totalAmount = days * parking.price
+
         bookingModel._id = new mongoose.Types.ObjectId();
         
         const checkout = {
             customer_email: bookingModel.email,
             currency: 'chf',
             product: `Simul Parking: ${bookingModel.firstName} ${bookingModel.lastName} booked parking space at ${bookingModel.parkingName}(${bookingModel.parkingEstablishmentId})`,
-            amount: bookingModel.totalAmount,
+            amount: totalAmount,
             quantity: 1,
             success_route: encodeURI(bookingModel.successRoute),
             cancel_route: encodeURI(bookingModel.cancelRoute),
