@@ -1,5 +1,13 @@
 const Joi = require('joi');
 const { idSchema } = require('../../../shared/schema');
+const { isMatch } = require('date-fns');
+
+const dateStringValidation = (value, helpers) => {
+  if (!isMatch(value, 'yyyy-MM-dd HH:mm')) {
+    return helpers.error('any.invalid');
+  }
+  return value;
+};
 
 const shuttleBookingSchema = Joi.object({
   firstName: Joi.string().required().messages({
@@ -20,9 +28,9 @@ const shuttleBookingSchema = Joi.object({
     'any.required': 'Pickup Address is a required field',
   }),
 
-  pickupDatetime: Joi.date().required().messages({
-    'date.base': 'Pickup Datetime must be a valid date',
+  pickupDatetime: Joi.string().custom(dateStringValidation, 'custom validation').required().messages({
     'any.required': 'Pickup Datetime is required',
+    'any.invalid': 'Pickup Datetime format must be "yyyy-MM-dd HH:mm"'
   }),
 
   price: Joi.number().required().messages({
@@ -44,6 +52,12 @@ const shuttleBookingSchema = Joi.object({
     'string.empty': 'Parking Booking Id is a required field',
     'any.required': 'Parking Booking Id is a required field',
     'string.pattern.base': 'Parking Booking Id must be a valid Object ID'
+  }),
+  parkingId: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required().messages({
+    'string.base': 'Parking Id must be a string',
+    'string.empty': 'Parking Id is a required field',
+    'any.required': 'Parking Id is a required field',
+    'string.pattern.base': 'Parking Id must be a valid Object ID'
   })
 })
 

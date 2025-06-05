@@ -6,10 +6,11 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiY
     "firstName": "Test",
     "lastName": "Test",
     "pickupAddress": "Test",
-    "pickupDatetime": "2025-06-02T02:55:23.087Z",
+    "pickupDatetime": "2025-06-02 02:55",
     "price": 100,
     "seats": 6,
-    "parkingBookingId": "6825f5b8518a27b60513b193"
+    "parkingBookingId": "6825f5b8518a27b60513b193",
+    "parkingId": "683d40fcfbb478ada0fe4154"
 }
 
 ###
@@ -26,3 +27,19 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiY
     "seats": 6,
     "parkingBookingId": "6825f5b8518a27b60513b193"
 }
+
+###
+GET http://localhost:8080/api/shuttle-booking/683d726c0c0f92607bb45234
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiYjllZTI5OWJmNWYxYTU5MiIsImlhdCI6MTc0ODMyNzM1NiwiZXhwIjoxNzQ5MTkxMzU2fQ.RQCUVEFPP6yXPkxDR9iH0IfwFGCyMbem-7SeWVXi1co
+
+
+###
+GET http://localhost:8080/api/shuttle-booking/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiYjllZTI5OWJmNWYxYTU5MiIsImlhdCI6MTc0ODMyNzM1NiwiZXhwIjoxNzQ5MTkxMzU2fQ.RQCUVEFPP6yXPkxDR9iH0IfwFGCyMbem-7SeWVXi1co
+
+###
+DELETE http://localhost:8080/api/shuttle-booking/683d837feb20dff25adf6a64
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiYjllZTI5OWJmNWYxYTU5MiIsImlhdCI6MTc0ODMyNzM1NiwiZXhwIjoxNzQ5MTkxMzU2fQ.RQCUVEFPP6yXPkxDR9iH0IfwFGCyMbem-7SeWVXi1co

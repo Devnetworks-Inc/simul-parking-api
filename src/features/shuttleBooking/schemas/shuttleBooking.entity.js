@@ -31,7 +31,11 @@ const shuttleBookingSchema = new mongoose.Schema(
       required: true
     },
     parkingBookingId: {
-      type: String,
+      type: mongoose.ObjectId,
+      required: true,
+    },
+    parkingId: {
+      type: mongoose.ObjectId,
       required: true,
     }
   },
