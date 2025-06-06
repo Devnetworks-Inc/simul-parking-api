@@ -1,4 +1,4 @@
-const { differenceInDays } = require("date-fns")
+const { differenceInDays, differenceInHours } = require("date-fns")
 const { ResponseHandler } = require("../../../libs/core/api-responses/response.handler");
 const { NotFoundError } = require("../../../libs/core/error/custom-error");
 const APP_MESSAGES = require("../../../shared/messages/app-messages");
@@ -8,12 +8,33 @@ const { bookingSchema } = require("../validations/booking.validation");
 const { config } = require('../../../configs/config');
 const { default: mongoose } = require("mongoose");
 const { ParkingEntity } = require("../../parking/schemas/parking.entity");
+const { BookingDetailsEntity } = require("../schemas/booking.entity");
 const stripe = require('stripe')(config.STRIPE_KEY)
 
 class BookingController {
     constructor() {
         this._service = new BookingService();
         this._responseHandler = new ResponseHandler();
+        this._adapter = new BookingAdapter()
+    }
+
+    async generateUniqueParkingId() {
+        const prefix = 'PK';
+        let isUnique = false;
+        let parkingId = '';
+
+        while (!isUnique) {
+            const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase();
+            const timestamp = Date.now().toString().slice(-5);
+            parkingId = `${prefix}-${randomPart}-${timestamp}`;
+
+            const existingBooking = await BookingDetailsEntity.findOne({ parkingId });
+            if (!existingBooking) {
+                isUnique = true;
+            }
+        }
+
+        return parkingId;
     }
 
     async getAll(req, res) {
@@ -30,18 +51,18 @@ class BookingController {
     }
 
     async create(req, res) {
-        const bookingModel = req.body;
+        const { successRoute, cancelRoute } = req.body;
 
-        const forValidationModel = { ...bookingModel };
+        const forValidationModel = { ...req.body };
         //exclude fields for validation
-        delete forValidationModel.parkingEstablishmentId;
-        delete forValidationModel.parkingName;
         delete forValidationModel.successRoute;
         delete forValidationModel.cancelRoute;
-        const { error } = bookingSchema.validate(forValidationModel);
+        const { error, value: validatedBookingSchema } = bookingSchema.validate(forValidationModel, { stripUnknown: true });
         if (error) throw new Error(error.details[0].message);
 
-        const { endDate, startDate, parkingEstablishmentId } = bookingModel
+        const bookingModel = this._adapter.adapt(validatedBookingSchema)
+
+        const { endDatetime, startDatetime, parkingEstablishmentId } = bookingModel
 
         const parking = await ParkingEntity.findById(parkingEstablishmentId)
         if (!parking) {
@@ -49,8 +70,13 @@ class BookingController {
             return;
         }
 
-        const days = differrenceInDays(endDate, startDate) + 1
-        const totalAmount = days * parking.price
+        let days = differenceInHours(endDatetime, startDatetime) / 24
+        if (days <= 0) {
+            this._responseHandler.sendDynamicError(res, "End Date must be greater than Start Date", 400)
+            return;
+        }
+
+        const totalAmount = Math.ceil(days) * parking.price
 
         bookingModel._id = new mongoose.Types.ObjectId();
         
@@ -60,8 +86,8 @@ class BookingController {
             product: `Simul Parking: ${bookingModel.firstName} ${bookingModel.lastName} booked parking space at ${bookingModel.parkingName}(${bookingModel.parkingEstablishmentId})`,
             amount: totalAmount,
             quantity: 1,
-            success_route: encodeURI(bookingModel.successRoute),
-            cancel_route: encodeURI(bookingModel.cancelRoute),
+            success_route: encodeURI(successRoute),
+            cancel_route: encodeURI(cancelRoute),
             metadata: {
                 booking_id: bookingModel._id.toString(),
                 product_service: 'SIMUL_PARKING_SPACE_BOOKING'
@@ -71,7 +97,8 @@ class BookingController {
         const session = await this.createStripeCheckoutSession(checkout, req);
         bookingModel.checkoutSessionId = session.id
         bookingModel.bookingDate = new Date();
-        await this._service.createBooking(bookingModel);
+        bookingModel.parkingId = await this.generateUniqueParkingId()
+        await bookingModel.save();
         this._responseHandler.sendCreated(res, { sessionUrl: session.url });
     }
 

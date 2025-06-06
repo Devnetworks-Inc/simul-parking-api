@@ -1,6 +1,8 @@
 const { Router } = require('express');
 const { asyncHandler } = require('../../../libs/core/handlers/async.handler');
 const { ParkingController } = require('../controller/parking.controller');
+const { validateRequest } = require('../../../middleware/validateRequest');
+const { parkingSchema } = require('../validations/parking.validation');
 
 const controller = new ParkingController();
 const router = Router();
@@ -8,6 +10,7 @@ const router = Router();
 router
   .post(
     '/',
+    validateRequest({ bodySchema: parkingSchema }),
     asyncHandler(async (req, res) => controller.create(req, res))
   )
   .get(

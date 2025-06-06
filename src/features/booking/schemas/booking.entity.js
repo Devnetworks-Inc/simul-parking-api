@@ -23,11 +23,27 @@ const BookingSchema = new mongoose.Schema(
       type: String,
       required: true
     },
+    // Date with time 
+    startDatetime: {
+      type: Date,
+      required: true
+    },
+    // Date without time
     startDate: {
       type: Date,
       required: true
     },
-    startTime: {
+    // Hour only
+    startTimeHour: {
+      type: Number,
+      required: true
+    },
+    // Minute only
+    startTimeMinute: {
+      type: Number,
+      required: true
+    },
+    endDatetime: {
       type: Date,
       required: true
     },
@@ -35,8 +51,12 @@ const BookingSchema = new mongoose.Schema(
       type: Date,
       required: true
     },
-    endTime: {
-      type: Date,
+    endTimeHour: {
+      type: Number,
+      required: true
+    },
+     endTimeMinute: {
+      type: Number,
       required: true
     },
 
@@ -54,7 +74,7 @@ const BookingSchema = new mongoose.Schema(
       require: true
     },
     parkingEstablishmentId: {
-      type: String,
+      type: mongoose.ObjectId,
       required: true
     },
     parkingName: {

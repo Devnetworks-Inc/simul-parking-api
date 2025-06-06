@@ -22,10 +22,11 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiY
     "firstName": "Test",
     "lastName": "Test",
     "pickupAddress": "Test",
-    "pickupDatetime": "2025-06-02T02:55:23.087Z",
+    "pickupDatetime": "2025-07-02 02:55",
     "price": 500,
     "seats": 6,
-    "parkingBookingId": "6825f5b8518a27b60513b193"
+    "parkingBookingId": "6825f5b8518a27b60513b193",
+    "parkingId": "683d40fcfbb478ada0fe4154"
 }
 
 ###
