@@ -17,6 +17,14 @@ router
 
 router
   .put(
+    '/location/:id',
+    asyncHandler(async (req, res) => controller.updateParkingSpaceLocation(req, res))
+  )
+  .put(
+    '/picked-up/:id',
+    asyncHandler(async (req, res) => controller.updateVehiclePickedUp(req, res))
+  )
+  .put(
     '/:id',
     asyncHandler(async (req, res) => controller.update(req, res))
   )

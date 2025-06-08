@@ -1,4 +1,4 @@
-const { differenceInDays, differenceInHours } = require("date-fns")
+const { differenceInDays, differenceInHours, compareAsc } = require("date-fns")
 const { ResponseHandler } = require("../../../libs/core/api-responses/response.handler");
 const { NotFoundError } = require("../../../libs/core/error/custom-error");
 const APP_MESSAGES = require("../../../shared/messages/app-messages");
@@ -38,15 +38,37 @@ class BookingController {
     }
 
     async getAll(req, res) {
-        const filter = req.query || {};
-        const data = await this._service.getAll(filter);
-        this._responseHandler.sendSuccess(res, data);
+        const { page = 1, limit = 10, startDate = new Date(new Date().getDate() - 30), endDate = new Date() } = req.query || {};
+        const filter = {
+            startDatetime: { $gte: startDate, $lte: endDate },
+        }
+        const data = await BookingDetailsEntity.find(filter).lean();
+        const total = await BookingDetailsEntity.countDocuments(filter);
+        const skip = (page - 1) * limit;
+
+        const response = {
+            data: data.map(d => {
+                const isPastPeriod = compareAsc(new Date(), d.endDatetime) === 1 ? true : false
+                return {
+                    ...d,
+                    isPastPeriod
+                }
+            }),
+            total,
+            page: Math.ceil(skip / limit) + 1,
+            pageSize: limit
+        };
+        
+        this._responseHandler.sendSuccess(res, response)
     }
 
     async getById(req, res) {
         const id = req.params.id;
         const result = await this._service.getById(id);
         if (!result) throw new NotFoundError(APP_MESSAGES.BOOKING_NOT_FOUND);
+
+        const isPastPeriod = compareAsc(new Date(), result.endDatetime) === 1 ? true : false
+        result.isPastPeriod = isPastPeriod
         this._responseHandler.sendSuccess(res, result);
     }
 
@@ -138,13 +160,51 @@ class BookingController {
 
     async update(req, res) {
         const id = req.params.id;
-        const updatedData = req.body;
+        const body = req.body;
 
-        const { error } = bookingSchema.validate(updatedData);
+        const { error, value: validatedBookingSchema } = bookingSchema.validate(body, { stripUnknown: true });
         if (error) throw new Error(error.details[0].message);
         
-        const result = await this._service.updateBooking(id, updatedData);
-        if (!result) throw new NotFoundError(APP_MESSAGES.BOOKING_NOT_FOUND);
+        let bookingModel = await BookingDetailsEntity.findById(id)
+
+        if (!bookingModel) {
+             this._responseHandler.sendDynamicError(res, "Parking Booking does not exist", 404)
+            return;
+        }
+        
+        const { startDate, endDate } = validatedBookingSchema
+        const bookingUpdate = this._adapter.modifyParkingPeriod(validatedBookingSchema, startDate, endDate)
+        const updatedBookingModel = await BookingDetailsEntity.findByIdAndUpdate(id, bookingUpdate, { returnDocument: 'after' })
+        this._responseHandler.sendUpdated(res, updatedBookingModel);
+    }
+
+    async updateVehiclePickedUp(req, res) {
+        const id = req.params.id;
+        const { isVehiclePickedUp } = req.body;
+        const parkingBooking = await BookingDetailsEntity.findById(id)
+
+        if (!parkingBooking) {
+            this._responseHandler.sendDynamicError(res, "Parking Booking does not exist", 404)
+            return;
+        }
+
+        parkingBooking.isVehiclePickedUp = isVehiclePickedUp
+        const result = await parkingBooking.save()
+        this._responseHandler.sendUpdated(res, result);
+    }
+
+    async updateParkingSpaceLocation(req, res) {
+        const id = req.params.id;
+        const { parkingSpaceLocation } = req.body;
+        const parkingBooking = await BookingDetailsEntity.findById(id)
+
+        if (!parkingBooking) {
+            this._responseHandler.sendDynamicError(res, "Parking Booking does not exist", 404)
+            return;
+        }
+
+        parkingBooking.parkingSpaceLocation = parkingSpaceLocation
+        const result = await parkingBooking.save()
         this._responseHandler.sendUpdated(res, result);
     }
 

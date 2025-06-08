@@ -59,7 +59,6 @@ const BookingSchema = new mongoose.Schema(
       type: Number,
       required: true
     },
-
     parkingId: {
       type: String,
       required: true
@@ -87,6 +86,8 @@ const BookingSchema = new mongoose.Schema(
       default: 'processing'
     },
     bookingDate: Date,
+    parkingSpaceLocation: String,
+    isVehiclePickedUp: Boolean,
     checkoutSessionId: String,
     checkoutSessionPaymentDate: Date,
     checkoutSessionFailedDate: Date,

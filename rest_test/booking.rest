@@ -4,6 +4,11 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiYjllZTI5OWJmNWYxYTU5MiIsImlhdCI6MTc0ODMyNzM1NiwiZXhwIjoxNzQ5MTkxMzU2fQ.RQCUVEFPP6yXPkxDR9iH0IfwFGCyMbem-7SeWVXi1co
 
 ###
+GET http://localhost:8080/api/booking/?startDate=2025-06-08T14:31:30.797Z&endDate=2025-10-08T14:31:30.797Z
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiYjllZTI5OWJmNWYxYTU5MiIsImlhdCI6MTc0ODMyNzM1NiwiZXhwIjoxNzQ5MTkxMzU2fQ.RQCUVEFPP6yXPkxDR9iH0IfwFGCyMbem-7SeWVXi1co
+
+###
 POST http://localhost:8080/api/booking
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiYjllZTI5OWJmNWYxYTU5MiIsImlhdCI6MTc0ODMyNzM1NiwiZXhwIjoxNzQ5MTkxMzU2fQ.RQCUVEFPP6yXPkxDR9iH0IfwFGCyMbem-7SeWVXi1co
@@ -21,3 +26,43 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiY
     "successRoute": "booking",
     "cancelRoute": ""
 }
+
+###
+PUT http://localhost:8080/api/booking/6825f5b8518a27b60513b193
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiYjllZTI5OWJmNWYxYTU5MiIsImlhdCI6MTc0ODMyNzM1NiwiZXhwIjoxNzQ5MTkxMzU2fQ.RQCUVEFPP6yXPkxDR9iH0IfwFGCyMbem-7SeWVXi1co
+
+{
+    "isServices": true,
+    "totalAmount": 200,
+    "firstName": "mike",
+    "lastName": "ale",
+    "email": "m@gmail.com",
+    "phone": "1234567890",
+    "startDate": "2025-07-02 02:55",
+    "endDate": "2025-08-02 02:55",
+    "parkingName": "Parking 1",
+    "parkingEstablishmentId": "6842924986820afb2424100e",
+    "successRoute": "booking",
+    "cancelRoute": "",
+    "departureAirport": "Zurich"
+}
+
+###
+PUT http://localhost:8080/api/booking/location/68429b560804ea73fa0107ef
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiYjllZTI5OWJmNWYxYTU5MiIsImlhdCI6MTc0ODMyNzM1NiwiZXhwIjoxNzQ5MTkxMzU2fQ.RQCUVEFPP6yXPkxDR9iH0IfwFGCyMbem-7SeWVXi1co
+
+{
+    "parkingSpaceLocation": "molave"
+}
+
+###
+PUT http://localhost:8080/api/booking/picked-up/68429b560804ea73fa0107ef
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiYjllZTI5OWJmNWYxYTU5MiIsImlhdCI6MTc0ODMyNzM1NiwiZXhwIjoxNzQ5MTkxMzU2fQ.RQCUVEFPP6yXPkxDR9iH0IfwFGCyMbem-7SeWVXi1co
+
+{
+    "isVehiclePickedUp": true
+}
+
