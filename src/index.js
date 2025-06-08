@@ -5,6 +5,7 @@ const http = require('http');
 const { errorHandler } = require('./libs/core/error/error-handler');
 const MongoDB = require('./libs/database/db');
 const { config } = require("./configs/config");
+process.env.TZ = 'Europe/Berlin'
 
 const app = express();
 const server = http.createServer(app);

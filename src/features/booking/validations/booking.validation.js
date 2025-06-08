@@ -1,6 +1,10 @@
 const Joi = require('joi');
 const { dateStringValidation, idSchema } = require('../../../shared/schema');
 
+const parkingSpaceLocation = Joi.string().optional().messages({
+  'string.base': 'Parking Space Location must be a string',
+})
+
 const bookingSchema = Joi.object({
   firstName: Joi.string().required().messages({
     'string.base': 'First name must be a string',
@@ -59,7 +63,13 @@ const bookingSchema = Joi.object({
     'string.empty': 'Parking Id is a required field',
     'any.required': 'Parking Id is a required field',
     'string.pattern.base': 'Parking Id must be a valid Object ID'
-  })
+  }),
+  // parkingId: Joi.string().optional().messages({
+  //   'string.base': 'Parking Id must be a string',
+  //   'string.empty': 'Parking Id cannot be an empty string',
+  // }),
+  parkingSpaceLocation,
+  isVehiclePickedUp: Joi.boolean().optional(),
 });
 
-module.exports = { bookingSchema };
+module.exports = { bookingSchema, parkingSpaceLocation };

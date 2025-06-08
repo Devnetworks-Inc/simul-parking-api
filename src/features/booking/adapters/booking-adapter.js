@@ -1,7 +1,7 @@
 const { BookingDetailsEntity } = require("../schemas/booking.entity");
 
 class BookingAdapter {
-  adapt(item) {
+  adapt(item, bookingModel) {
     const {
       _id,
       firstName,
@@ -35,7 +35,7 @@ class BookingAdapter {
     const endTimeArr = endTimeStr.split(':')
     const endDatetime = new Date(+endDateArr[0], +endDateArr[1] - 1, +endDateArr[2], +endTimeArr[0], +endTimeArr[1])
   
-    const result = new BookingDetailsEntity({ _id });
+    const result = bookingModel || new BookingDetailsEntity({ _id });
     result.firstName = firstName;
     result.lastName = lastName;
     result.email = email;
@@ -96,6 +96,40 @@ class BookingAdapter {
     model.totalAmount = totalAmount ?? model.totalAmount;
 
     return model;
+  }
+
+  /**
+ * @param {Object} [booking] - validated booking schema
+ * @param {string} [startDate] - Date string format "yyyy-MM-dd HH:mm"
+ * @param {string} [endDate] - Date string format "yyyy-MM-dd HH:mm"
+ * @return {BookingEntity} Modified Booking Model
+ *
+ * @example
+ *
+ *     modifyParkingPeriod(bookingModel, "2025-07-02 02:55", "2025-08-02 02:55")
+ */
+  modifyParkingPeriod(booking, startDate, endDate) {
+    const [startDateStr, startTimeStr] = startDate.split(' ')
+    const startDateArr = startDateStr.split('-')
+    const startTimeArr = startTimeStr.split(':')
+    const startDatetime = new Date(+startDateArr[0], +startDateArr[1] - 1, +startDateArr[2], +startTimeArr[0], +startTimeArr[1])
+  
+    const [endDateStr, endTimeStr] = endDate.split(' ')
+    const endDateArr = endDateStr.split('-')
+    const endTimeArr = endTimeStr.split(':')
+    const endDatetime = new Date(+endDateArr[0], +endDateArr[1] - 1, +endDateArr[2], +endTimeArr[0], +endTimeArr[1])
+
+    booking.startDate = new Date(Date.UTC(+startDateArr[0], +startDateArr[1] - 1, +startDateArr[2]));
+    booking.startDatetime = startDatetime
+    booking.startTimeHour = +startTimeArr[0]
+    booking.startTimeMinute = +startTimeArr[1]
+  
+    booking.endDatetime = endDatetime
+    booking.endDate = new Date(Date.UTC(+endDateArr[0], +endDateArr[1] - 1, +endDateArr[2]));
+    booking.endTimeHour = +endTimeArr[0]
+    booking.endTimeMinute = +endTimeArr[1]
+
+    return booking
   }
 }
 
