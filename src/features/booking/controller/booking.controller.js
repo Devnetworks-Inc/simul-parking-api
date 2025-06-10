@@ -38,13 +38,23 @@ class BookingController {
     }
 
     async getAll(req, res) {
-        const { page = 1, limit = 10, startDate = new Date(new Date().getDate() - 30), endDate = new Date() } = req.query || {};
-        const filter = {
-            startDatetime: { $gte: startDate, $lte: endDate },
+        const { page = 1, limit = 10, startDate, endDate } = req.query || {};
+        const filter = {}
+        let startDateFilter
+        if (startDate) {
+            startDateFilter = {}
+            startDateFilter.$gte = startDate
         }
-        const data = await BookingDetailsEntity.find(filter).lean();
-        const total = await BookingDetailsEntity.countDocuments(filter);
+        if (endDate) {
+            startDateFilter = startDateFilter || {}
+            startDateFilter.$lte = endDate
+        }
+        if (startDateFilter) {
+            filter.startDate = startDateFilter
+        }
         const skip = (page - 1) * limit;
+        const data = await BookingDetailsEntity.find(filter).skip(skip).limit(limit).lean();
+        const total = await BookingDetailsEntity.countDocuments(filter);
 
         const response = {
             data: data.map(d => {
