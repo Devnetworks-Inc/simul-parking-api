@@ -121,6 +121,7 @@ class BookingController {
         const totalAmount = Math.ceil(days) * parking.price
 
         bookingModel._id = new mongoose.Types.ObjectId();
+        bookingModel.totalAmount = totalAmount
         
         const checkout = {
             customer_email: bookingModel.email,
