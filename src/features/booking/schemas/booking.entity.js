@@ -88,6 +88,7 @@ const BookingSchema = new mongoose.Schema(
     bookingDate: Date,
     parkingSpaceLocation: String,
     isVehiclePickedUp: Boolean,
+    vehiclePickedUpDate: Date,
     checkoutSessionId: String,
     checkoutSessionPaymentDate: Date,
     checkoutSessionFailedDate: Date,

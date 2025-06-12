@@ -210,6 +210,7 @@ class BookingController {
         }
 
         parkingBooking.isVehiclePickedUp = isVehiclePickedUp
+        parkingBooking.vehiclePickedUpDate = Date.now()
         const result = await parkingBooking.save()
         this._responseHandler.sendUpdated(res, result);
     }
