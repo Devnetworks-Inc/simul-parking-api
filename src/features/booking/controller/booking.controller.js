@@ -1,4 +1,4 @@
-const { differenceInDays, differenceInHours, compareAsc } = require("date-fns")
+const { compareAsc, differenceInMinutes } = require("date-fns")
 const { ResponseHandler } = require("../../../libs/core/api-responses/response.handler");
 const { NotFoundError } = require("../../../libs/core/error/custom-error");
 const APP_MESSAGES = require("../../../shared/messages/app-messages");
@@ -40,7 +40,7 @@ class BookingController {
 
     async getAll(req, res) {
         const { page = 1, limit = 10, startDate, endDate } = req.query || {};
-        const filter = {}
+        const filter = { startDatetime: { $exists: true }, endDatetime: { $exists: true } }
         let startDateFilter
         if (startDate) {
             startDateFilter = {}
@@ -112,7 +112,7 @@ class BookingController {
             return;
         }
 
-        let days = differenceInHours(endDatetime, startDatetime) / 24
+        let days = differenceInMinutes(endDatetime, startDatetime) / 1440
         if (days <= 0) {
             this._responseHandler.sendDynamicError(res, "End Date must be greater than Start Date", 400)
             return;
