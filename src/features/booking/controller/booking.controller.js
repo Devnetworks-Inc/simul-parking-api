@@ -9,6 +9,7 @@ const { config } = require('../../../configs/config');
 const { default: mongoose } = require("mongoose");
 const { ParkingEntity } = require("../../parking/schemas/parking.entity");
 const { BookingDetailsEntity } = require("../schemas/booking.entity");
+const { ShuttleBookingEntity } = require("../../shuttleBooking/schemas/shuttleBooking.entity");
 const stripe = require('stripe')(config.STRIPE_KEY)
 
 class BookingController {
@@ -53,17 +54,23 @@ class BookingController {
             filter.startDate = startDateFilter
         }
         const skip = (page - 1) * limit;
-        const data = await BookingDetailsEntity.find(filter).skip(skip).limit(limit).lean();
-        const total = await BookingDetailsEntity.countDocuments(filter);
+        const [data, total] = await Promise.all([
+            BookingDetailsEntity.find(filter).skip(skip).limit(limit).lean(),
+            BookingDetailsEntity.countDocuments(filter)
+        ])
+
+        const dataWithShuttleBookings = await Promise.all(data.map(d => new Promise(async (resolve) => {
+            const isPastPeriod = compareAsc(new Date(), d.endDatetime) === 1 ? true : false
+            const shuttleBooking = await ShuttleBookingEntity.findOne({ parkingBookingId: d._id }).lean()
+            resolve({
+                ...d,
+                isPastPeriod,
+                shuttleBooking
+            })
+        })))
 
         const response = {
-            data: data.map(d => {
-                const isPastPeriod = compareAsc(new Date(), d.endDatetime) === 1 ? true : false
-                return {
-                    ...d,
-                    isPastPeriod
-                }
-            }),
+            data: dataWithShuttleBookings,
             total,
             page: Math.ceil(skip / limit) + 1,
             pageSize: limit
@@ -76,6 +83,9 @@ class BookingController {
         const id = req.params.id;
         const result = await this._service.getById(id);
         if (!result) throw new NotFoundError(APP_MESSAGES.BOOKING_NOT_FOUND);
+
+        const shuttleBooking = await ShuttleBookingEntity.findOne({ parkingBookingId: result._id }).lean()
+        result.shuttleBooking = shuttleBooking
 
         const isPastPeriod = compareAsc(new Date(), result.endDatetime) === 1 ? true : false
         result.isPastPeriod = isPastPeriod
