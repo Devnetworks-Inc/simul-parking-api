@@ -60,7 +60,9 @@ class BookingController {
         ])
 
         const dataWithShuttleBookings = await Promise.all(data.map(d => new Promise(async (resolve) => {
-            const isPastPeriod = compareAsc(new Date(), d.endDatetime) === 1 ? true : false
+            const comparisonDate = d.vehiclePickedUpDate ? new Date(d.vehiclePickedUpDate) : new Date();
+            const isPastPeriod = compareAsc(comparisonDate, d.endDatetime) === 1;
+            // const isPastPeriod = compareAsc(new Date(), d.endDatetime) === 1 ? true : false
             const shuttleBooking = await ShuttleBookingEntity.findOne({ parkingBookingId: d._id }).lean()
             resolve({
                 ...d,
@@ -87,7 +89,9 @@ class BookingController {
         const shuttleBooking = await ShuttleBookingEntity.findOne({ parkingBookingId: result._id }).lean()
         result.shuttleBooking = shuttleBooking
 
-        const isPastPeriod = compareAsc(new Date(), result.endDatetime) === 1 ? true : false
+        const comparisonDate = result.vehiclePickedUpDate ? new Date(result.vehiclePickedUpDate) : new Date();
+        const isPastPeriod = compareAsc(comparisonDate, result.endDatetime) === 1;
+        // const isPastPeriod = compareAsc(new Date(), result.endDatetime) === 1 ? true : false
         result.isPastPeriod = isPastPeriod
         this._responseHandler.sendSuccess(res, result);
     }
