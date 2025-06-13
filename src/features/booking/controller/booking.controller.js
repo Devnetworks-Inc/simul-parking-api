@@ -98,7 +98,7 @@ class BookingController {
         result.isPastPeriod = compareAsc(today, result.endDatetime) === 1 ? true : false
 
         if (result.isPastPeriod) {
-            result.daysPassed = Math.ceil(differenceInMinutes(today, endDatetime) / 1440)
+            result.daysPassed = Math.ceil(differenceInMinutes(today, result.endDatetime) / 1440)
         }
     
         this._responseHandler.sendSuccess(res, result);
