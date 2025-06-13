@@ -58,16 +58,23 @@ class BookingController {
             BookingDetailsEntity.find(filter).skip(skip).limit(limit).lean(),
             BookingDetailsEntity.countDocuments(filter)
         ])
+        const today = new Date()
 
         const dataWithShuttleBookings = await Promise.all(data.map(d => new Promise(async (resolve) => {
-            const comparisonDate = d.vehiclePickedUpDate ? new Date(d.vehiclePickedUpDate) : new Date();
+            const comparisonDate = d.vehiclePickedUpDate ? new Date(d.vehiclePickedUpDate) : today;
             const isPastPeriod = compareAsc(comparisonDate, d.endDatetime) === 1;
-            // const isPastPeriod = compareAsc(new Date(), d.endDatetime) === 1 ? true : false
             const shuttleBooking = await ShuttleBookingEntity.findOne({ parkingBookingId: d._id }).lean()
+            let daysPassed = 0
+
+            if (isPastPeriod) {
+                daysPassed = Math.ceil(differenceInMinutes(today, d.endDatetime) / 1440)
+            }
+
             resolve({
                 ...d,
                 isPastPeriod,
-                shuttleBooking
+                shuttleBooking,
+                daysPassed
             })
         })))
 
@@ -88,11 +95,14 @@ class BookingController {
 
         const shuttleBooking = await ShuttleBookingEntity.findOne({ parkingBookingId: result._id }).lean()
         result.shuttleBooking = shuttleBooking
+        const today = new Date()
+        const comparisonDate = result.vehiclePickedUpDate ? new Date(result.vehiclePickedUpDate) : today;
+        result.isPastPeriod = compareAsc(comparisonDate, result.endDatetime) === 1
 
-        const comparisonDate = result.vehiclePickedUpDate ? new Date(result.vehiclePickedUpDate) : new Date();
-        const isPastPeriod = compareAsc(comparisonDate, result.endDatetime) === 1;
-        // const isPastPeriod = compareAsc(new Date(), result.endDatetime) === 1 ? true : false
-        result.isPastPeriod = isPastPeriod
+        if (result.isPastPeriod) {
+            result.daysPassed = Math.ceil(differenceInMinutes(today, result.endDatetime) / 1440)
+        }
+    
         this._responseHandler.sendSuccess(res, result);
     }
 
