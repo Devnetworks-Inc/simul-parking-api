@@ -85,7 +85,10 @@ const BookingSchema = new mongoose.Schema(
       enum: ['paid', 'processing', 'failed'],
       default: 'processing'
     },
-    bookingDate: Date,
+    bookingDate: {
+      type: Date,
+      required: true
+    },
     parkingSpaceLocation: String,
     isVehiclePickedUp: Boolean,
     vehiclePickedUpDate: Date,
