@@ -1,5 +1,10 @@
 const Joi = require('joi');
 
+const parkingSpaceSchema = Joi.object({
+  spaceNumber: Joi.string().required(),
+  isOccupied: Joi.boolean().default(false),
+})
+
 const parkingSchema = Joi.object({
   name: Joi.string().required().messages({
     'string.base': 'name must be a string',
@@ -31,7 +36,10 @@ const parkingSchema = Joi.object({
   address: Joi.string().required().messages({
     'any.required': 'address is a required field',
   }),
-  img: Joi.string()
+  img: Joi.string(),
+  parkingSpaces: Joi.array().items(
+     parkingSpaceSchema
+  ).unique('spaceNumber')
 });
 
 module.exports = { parkingSchema };

@@ -3,6 +3,7 @@ const { asyncHandler } = require('../../../libs/core/handlers/async.handler');
 const { ParkingController } = require('../controller/parking.controller');
 const { validateRequest } = require('../../../middleware/validateRequest');
 const { parkingSchema } = require('../validations/parking.validation');
+const { idParamSchema } = require('../../../shared/schema');
 
 const controller = new ParkingController();
 const router = Router();
@@ -21,6 +22,7 @@ router
 router
   .put(
     '/:id',
+    validateRequest({ bodySchema: parkingSchema, paramsSchema: idParamSchema }),
     asyncHandler(async (req, res) => controller.update(req, res))
   )
   .get(

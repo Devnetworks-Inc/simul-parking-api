@@ -102,7 +102,7 @@ class BookingAdapter {
  * @param {Object} [booking] - validated booking schema
  * @param {string} [startDate] - Date string format "yyyy-MM-dd HH:mm"
  * @param {string} [endDate] - Date string format "yyyy-MM-dd HH:mm"
- * @return {BookingEntity} Modified Booking Model
+ * @return {Object} Modified Booking Object
  *
  * @example
  *

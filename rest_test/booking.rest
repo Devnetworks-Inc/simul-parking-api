@@ -1,5 +1,5 @@
 ###
-GET http://localhost:8080/api/booking/6825f5b8518a27b60513b193
+GET http://localhost:8080/api/booking/6842959ac2eeb2ef53217a9b
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiYjllZTI5OWJmNWYxYTU5MiIsImlhdCI6MTc0ODMyNzM1NiwiZXhwIjoxNzQ5MTkxMzU2fQ.RQCUVEFPP6yXPkxDR9iH0IfwFGCyMbem-7SeWVXi1co
 

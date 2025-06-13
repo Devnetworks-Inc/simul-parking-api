@@ -89,6 +89,10 @@ const BookingSchema = new mongoose.Schema(
       type: Date,
       required: true
     },
+    parkingPrice: {
+      type: Number,
+      required: true
+    },
     parkingSpaceLocation: String,
     isVehiclePickedUp: Boolean,
     vehiclePickedUpDate: Date,
