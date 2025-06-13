@@ -3,12 +3,16 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiYjllZTI5OWJmNWYxYTU5MiIsImlhdCI6MTc0ODMyNzM1NiwiZXhwIjoxNzQ5MTkxMzU2fQ.RQCUVEFPP6yXPkxDR9iH0IfwFGCyMbem-7SeWVXi1co
 
 {
-    "name": "Test Parking",
+    "name": "Test Parking 2",
     "rating": "5",
     "transferTime": "5 mins",
     "description": "description",
     "address": "molave",
-    "price": 100
+    "price": 100,
+    "parkingSpaces": [
+        { "spaceNumber": "123", "isOccupied": true },
+        { "spaceNumber": "124" }
+    ]
 }
 
 ###
@@ -22,16 +26,22 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiYjllZTI5OWJmNWYxYTU5MiIsImlhdCI6MTc0ODMyNzM1NiwiZXhwIjoxNzQ5MTkxMzU2fQ.RQCUVEFPP6yXPkxDR9iH0IfwFGCyMbem-7SeWVXi1co
 
 ###
-PUT http://localhost:8080/api/parking/68355d9cb9ee299bf5f1a594
+PUT http://localhost:8080/api/parking/684bb4571434f8f19ea2e236
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiYjllZTI5OWJmNWYxYTU5MiIsImlhdCI6MTc0ODMyNzM1NiwiZXhwIjoxNzQ5MTkxMzU2fQ.RQCUVEFPP6yXPkxDR9iH0IfwFGCyMbem-7SeWVXi1co
 
 {
-    "name": "Test Parking",
-    "rating": "5",
+    "name": "Test Parking 2",
+    "rating": "150",
     "transferTime": "5 mins",
     "description": "description",
-    "price": 10
+    "address": "molave",
+    "price": 100,
+    "tags": ["kigz", "waa"],
+    "parkingSpaces": [
+        { "spaceNumber": "122", "isOccupied": true },
+        { "spaceNumber": "123", "isOccupied": true }
+    ]
 }
 
 ###

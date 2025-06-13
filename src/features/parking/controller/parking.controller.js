@@ -37,23 +37,20 @@ class ParkingController {
 
     async create(req, res) {
         const parkingModel = req.body;
-
-        const { error } = parkingSchema.validate(parkingModel);
-        if (error) throw new Error(error.details[0].message);
-
-        const created = await this._service.createParking(parkingModel);
+        const created = await ParkingEntity.create(parkingModel)
         this._responseHandler.sendCreated(res, created);
     }
 
     async update(req, res) {
         const id = req.params.id;
-        const updatedData = this._adapter.adaptAsObject(req.body);
+        const updatedData = req.body
+        const result = await ParkingEntity.findByIdAndUpdate(id, updatedData, { returnDocument: 'after' });
 
-        const { error } = parkingSchema.validate(updatedData);
-        if (error) throw new Error(error.details[0].message);
-        
-        const result = await this._service.updateParking(id, updatedData);
-        if (!result) throw new NotFoundError(APP_MESSAGES.BOOKING_NOT_FOUND);
+        if (!result) {
+            this._responseHandler.sendDynamicError(res, "Parking does not exists", 404)
+            return
+        }
+
         this._responseHandler.sendUpdated(res, result);
     }
 

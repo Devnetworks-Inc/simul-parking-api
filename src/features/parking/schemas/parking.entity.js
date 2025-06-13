@@ -1,6 +1,17 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
+const parkingSpaceSchema = new mongoose.Schema({
+  spaceNumber: {
+    type: String,
+    required: true,
+  },
+  isOccupied: {
+    type: Boolean,
+    default: false
+  },
+})
+
 const parkingSchema = new mongoose.Schema(
   {
     name: {
@@ -36,6 +47,10 @@ const parkingSchema = new mongoose.Schema(
       type: [String],
       required: false,
       default: [],
+    },
+    parkingSpaces: {
+      type: [parkingSpaceSchema],
+      default: []
     }
   },
   {

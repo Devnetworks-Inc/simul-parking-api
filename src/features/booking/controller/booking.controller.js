@@ -136,6 +136,7 @@ class BookingController {
 
         bookingModel._id = new mongoose.Types.ObjectId();
         bookingModel.totalAmount = totalAmount
+        bookingModel.parkingPrice = parking.price
         
         const checkout = {
             customer_email: bookingModel.email,
@@ -209,6 +210,26 @@ class BookingController {
         
         const { startDate, endDate } = validatedBookingSchema
         const bookingUpdate = this._adapter.modifyParkingPeriod(validatedBookingSchema, startDate, endDate)
+        
+        const { endDatetime, startDatetime, parkingEstablishmentId } = bookingUpdate
+
+        const parking = await ParkingEntity.findById(parkingEstablishmentId)
+        if (!parking) {
+            this._responseHandler.sendDynamicError(res, "Parking Establishment does not exist", 404)
+            return;
+        }
+
+        let days = differenceInMinutes(endDatetime, startDatetime) / 1440
+        if (days <= 0) {
+            this._responseHandler.sendDynamicError(res, "End Date must be greater than Start Date", 400)
+            return;
+        }
+
+        const totalAmount = Math.ceil(days) * parking.price
+
+        bookingUpdate.totalAmount = totalAmount
+        bookingUpdate.parkingPrice = parking.price
+
         const updatedBookingModel = await BookingDetailsEntity.findByIdAndUpdate(id, bookingUpdate, { returnDocument: 'after' })
         this._responseHandler.sendUpdated(res, updatedBookingModel);
     }
@@ -224,7 +245,7 @@ class BookingController {
         }
 
         parkingBooking.isVehiclePickedUp = isVehiclePickedUp
-        parkingBooking.vehiclePickedUpDate = Date.now()
+        parkingBooking.vehiclePickedUpDate = isVehiclePickedUp ? Date.now() : null
         const result = await parkingBooking.save()
         this._responseHandler.sendUpdated(res, result);
     }
