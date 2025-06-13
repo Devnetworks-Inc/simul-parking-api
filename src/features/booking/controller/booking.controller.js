@@ -61,7 +61,8 @@ class BookingController {
         const today = new Date()
 
         const dataWithShuttleBookings = await Promise.all(data.map(d => new Promise(async (resolve) => {
-            const isPastPeriod = compareAsc(today, d.endDatetime) === 1 ? true : false
+            const comparisonDate = d.vehiclePickedUpDate ? new Date(d.vehiclePickedUpDate) : today;
+            const isPastPeriod = compareAsc(comparisonDate, d.endDatetime) === 1;
             const shuttleBooking = await ShuttleBookingEntity.findOne({ parkingBookingId: d._id }).lean()
             let daysPassed = 0
 
@@ -95,7 +96,8 @@ class BookingController {
         const shuttleBooking = await ShuttleBookingEntity.findOne({ parkingBookingId: result._id }).lean()
         result.shuttleBooking = shuttleBooking
         const today = new Date()
-        result.isPastPeriod = compareAsc(today, result.endDatetime) === 1 ? true : false
+        const comparisonDate = result.vehiclePickedUpDate ? new Date(result.vehiclePickedUpDate) : today;
+        result.isPastPeriod = compareAsc(comparisonDate, result.endDatetime) === 1
 
         if (result.isPastPeriod) {
             result.daysPassed = Math.ceil(differenceInMinutes(today, result.endDatetime) / 1440)
@@ -222,6 +224,7 @@ class BookingController {
         }
 
         parkingBooking.isVehiclePickedUp = isVehiclePickedUp
+        parkingBooking.vehiclePickedUpDate = Date.now()
         const result = await parkingBooking.save()
         this._responseHandler.sendUpdated(res, result);
     }
