@@ -40,7 +40,7 @@ class BookingController {
 
     async getAll(req, res) {
         const { page = 1, limit = 10, startDate, endDate } = req.query || {};
-        const filter = { startDatetime: { $exists: true }, endDatetime: { $exists: true } }
+        const filter = { schemaVersion: 2 }
         let startDateFilter
         if (startDate) {
             startDateFilter = {}
@@ -60,22 +60,24 @@ class BookingController {
         ])
         const today = new Date()
 
-        const dataWithShuttleBookings = await Promise.all(data.map(d => new Promise(async (resolve) => {
-            const comparisonDate = d.vehiclePickedUpDate ? new Date(d.vehiclePickedUpDate) : today;
-            const isPastPeriod = compareAsc(comparisonDate, d.endDatetime) === 1;
-            const shuttleBooking = await ShuttleBookingEntity.findOne({ parkingBookingId: d._id }).lean()
-            let daysPassed = 0
+        const dataWithShuttleBookings = await Promise.all(data.map(d => new Promise((resolve) => {
+            (async () => {
+                const comparisonDate = d.vehiclePickedUpDate ? new Date(d.vehiclePickedUpDate) : today;
+                const isPastPeriod = compareAsc(comparisonDate, d.endDatetime) === 1;
+                const shuttleBooking = await ShuttleBookingEntity.findOne({ parkingBookingId: d._id }).lean()
+                let daysPassed = 0
 
-            if (isPastPeriod) {
-                daysPassed = Math.ceil(differenceInMinutes(comparisonDate, d.endDatetime) / 1440)
-            }
+                if (isPastPeriod) {
+                    daysPassed = Math.ceil(differenceInMinutes(comparisonDate, d.endDatetime) / 1440)
+                }
 
-            resolve({
-                ...d,
-                isPastPeriod,
-                shuttleBooking,
-                daysPassed
-            })
+                resolve({
+                    ...d,
+                    isPastPeriod,
+                    shuttleBooking,
+                    daysPassed
+                })
+            })()
         })))
 
         const response = {
@@ -84,7 +86,7 @@ class BookingController {
             page: Math.ceil(skip / limit) + 1,
             pageSize: limit
         };
-        
+
         this._responseHandler.sendSuccess(res, response)
     }
 
@@ -102,7 +104,7 @@ class BookingController {
         if (result.isPastPeriod) {
             result.daysPassed = Math.ceil(differenceInMinutes(comparisonDate, result.endDatetime) / 1440)
         }
-    
+
         this._responseHandler.sendSuccess(res, result);
     }
 
@@ -137,7 +139,8 @@ class BookingController {
         bookingModel._id = new mongoose.Types.ObjectId();
         bookingModel.totalAmount = totalAmount
         bookingModel.parkingPrice = parking.price
-        
+        bookingModel.schemaVersion = 2
+
         const checkout = {
             customer_email: bookingModel.email,
             currency: 'chf',
@@ -160,7 +163,7 @@ class BookingController {
         this._responseHandler.sendCreated(res, { sessionUrl: session.url });
     }
 
-    async createStripeCheckoutSession( { currency, product, amount, quantity, metadata, success_route, cancel_route, customer_email }, req ){
+    async createStripeCheckoutSession({ currency, product, amount, quantity, metadata, success_route, cancel_route, customer_email }, req) {
 
         const originUrl = req.headers.origin
         const expiresAt = new Date(new Date().getTime() + 30 * 60000)
@@ -200,17 +203,17 @@ class BookingController {
 
         const { error, value: validatedBookingSchema } = bookingSchema.validate(body, { stripUnknown: true });
         if (error) throw new Error(error.details[0].message);
-        
+
         let bookingModel = await BookingDetailsEntity.findById(id)
 
         if (!bookingModel) {
-             this._responseHandler.sendDynamicError(res, "Parking Booking does not exist", 404)
+            this._responseHandler.sendDynamicError(res, "Parking Booking does not exist", 404)
             return;
         }
-        
+
         const { startDate, endDate } = validatedBookingSchema
         const bookingUpdate = this._adapter.modifyParkingPeriod(validatedBookingSchema, startDate, endDate)
-        
+
         const { endDatetime, startDatetime, parkingEstablishmentId } = bookingUpdate
 
         const parking = await ParkingEntity.findById(parkingEstablishmentId)
@@ -237,17 +240,22 @@ class BookingController {
     async updateVehiclePickedUp(req, res) {
         const id = req.params.id;
         const { isVehiclePickedUp } = req.body;
-        const parkingBooking = await BookingDetailsEntity.findById(id)
+        const parkingBooking = await BookingDetailsEntity.findByIdAndUpdate(id, {
+            isVehiclePickedUp,
+            vehiclePickedUpDate: isVehiclePickedUp ? Date.now() : null
+        }, { returnDocument: 'after' })
 
         if (!parkingBooking) {
             this._responseHandler.sendDynamicError(res, "Parking Booking does not exist", 404)
             return;
         }
 
-        parkingBooking.isVehiclePickedUp = isVehiclePickedUp
-        parkingBooking.vehiclePickedUpDate = isVehiclePickedUp ? Date.now() : null
-        const result = await parkingBooking.save()
-        this._responseHandler.sendUpdated(res, result);
+
+
+        // parkingBooking.isVehiclePickedUp = isVehiclePickedUp
+        // parkingBooking.vehiclePickedUpDate = isVehiclePickedUp ? Date.now() : null
+        // const result = await parkingBooking.save()
+        this._responseHandler.sendUpdated(res, parkingBooking);
     }
 
     async updateParkingSpaceLocation(req, res) {

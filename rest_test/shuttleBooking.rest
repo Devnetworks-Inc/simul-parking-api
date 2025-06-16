@@ -10,7 +10,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiY
     "price": 100,
     "seats": 6,
     "parkingBookingId": "6825f5b8518a27b60513b193",
-    "parkingId": "683d40fcfbb478ada0fe4154"
+    "parkingId": "6842924986820afb2424100e"
 }
 
 ###
