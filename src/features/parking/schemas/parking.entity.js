@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
 
 const parkingSpaceSchema = new mongoose.Schema({
   spaceNumber: {

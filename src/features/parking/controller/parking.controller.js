@@ -3,7 +3,6 @@ const { NotFoundError } = require("../../../libs/core/error/custom-error");
 const APP_MESSAGES = require("../../../shared/messages/app-messages");
 const { ParkingService } = require("../services/parking.service");
 const { ParkingAdapter } = require("../adapters/parking-adapter");
-const { parkingSchema } = require("../validations/parking.validation");
 const { ParkingEntity } = require("../schemas/parking.entity");
 const { ShuttleBookingEntity } = require("../../shuttleBooking/schemas/shuttleBooking.entity");
 
@@ -19,9 +18,11 @@ class ParkingController {
         const data = await this._service.getAll(filter);
 
         const updatedData = await Promise.all(
-            data.map((d) => new Promise(async (resolve) => {
-                const shuttleBookings = await ShuttleBookingEntity.find({ parkingId: d._id })
-                resolve({...d, shuttleBookings})
+            data.map((d) => new Promise((resolve) => {
+                ShuttleBookingEntity.find({ parkingId: d._id })
+                .then(shuttleBookings =>
+                    resolve({...d, shuttleBookings})
+                )
             }))
         )
 
