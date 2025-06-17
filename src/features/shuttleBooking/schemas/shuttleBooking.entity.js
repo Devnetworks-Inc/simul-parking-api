@@ -14,6 +14,10 @@ const shuttleBookingSchema = new mongoose.Schema(
       type: String,
       required: true
     },
+    destinationAddress: {
+      type: String,
+      required: true
+    },
     pickupDatetime: {
       type: Date,
       required: true
@@ -37,6 +41,10 @@ const shuttleBookingSchema = new mongoose.Schema(
     parkingId: {
       type: mongoose.ObjectId,
       required: true,
+    },
+    route: {
+      type: String,
+      enum: ['parking-airport', 'airport-parking'],
     }
   },
   {

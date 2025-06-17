@@ -93,6 +93,10 @@ const BookingSchema = new mongoose.Schema(
       type: Number,
       required: true
     },
+    vehicleNumber: {
+      type: String,
+      required: true
+    },
     schemaVersion: {
       type: Number,
       default: 2

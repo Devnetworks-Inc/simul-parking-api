@@ -1,4 +1,4 @@
-const { format } = require("date-fns");
+const { format, startOfDay, endOfDay } = require("date-fns");
 const { ResponseHandler } = require("../../../libs/core/api-responses/response.handler");
 const { BookingDetailsEntity } = require("../../booking/schemas/booking.entity");
 const { ParkingEntity } = require("../../parking/schemas/parking.entity");
@@ -83,6 +83,45 @@ class ShuttleBookingController {
   async getAll(req, res) {
     const shuttleBookings = await ShuttleBookingEntity.find().exec();
     this._responseHandler.sendSuccess(res, shuttleBookings);
+  }
+
+  async getTimetable(req, res) {
+    const { date, route } = req.query
+    const [year, month, day] = date.split('-')
+
+    // create date object based on server timezone which is set to Europe/Berlin
+    const dateObj = new Date(+year, +month - 1, +day)
+  
+    const start = startOfDay(dateObj)
+    const end = endOfDay(dateObj)
+
+    const shuttleBookings = await ShuttleBookingEntity.find({
+      pickupDatetime: { $gte: start, $lte: end, $exists: true },
+      route
+    }).sort({ pickupDatetime: 'asc' }).lean();
+
+    let currentTime
+    let currentTimeData = []
+
+    const timetable = shuttleBookings.reduce((arr, booking) => {
+      const pickupTime = format(booking.pickupDatetime, 'HH:mm')
+  
+      if (currentTime !== pickupTime) {
+        currentTime = pickupTime
+        currentTimeData = [booking]
+        arr.push({
+          pickupTime,
+          data: currentTimeData
+        })
+        return arr
+      }
+
+      const data = arr[arr.length - 1].data
+      data.push(booking)
+      return arr
+    }, [])
+
+    this._responseHandler.sendSuccess(res, timetable);
   }
 
   async delete(req, res) {

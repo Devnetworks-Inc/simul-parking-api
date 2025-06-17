@@ -2,8 +2,15 @@ const Joi = require('joi');
 const { idSchema } = require('../../../shared/schema');
 const { isMatch } = require('date-fns');
 
-const dateStringValidation = (value, helpers) => {
+const datetimeStringValidation = (value, helpers) => {
   if (!isMatch(value, 'yyyy-MM-dd HH:mm')) {
+    return helpers.error('any.invalid');
+  }
+  return value;
+};
+
+const dateStringValidation = (value, helpers) => {
+  if (!isMatch(value, 'yyyy-MM-dd')) {
     return helpers.error('any.invalid');
   }
   return value;
@@ -28,7 +35,13 @@ const shuttleBookingSchema = Joi.object({
     'any.required': 'Pickup Address is a required field',
   }),
 
-  pickupDatetime: Joi.string().custom(dateStringValidation, 'custom validation').required().messages({
+  destinationAddress: Joi.string().required().messages({
+    'string.base': 'Destination Address must be a string',
+    'string.empty': 'Destination Address is a required field',
+    'any.required': 'Destination Address is a required field',
+  }),
+
+  pickupDatetime: Joi.string().custom(datetimeStringValidation, 'custom validation').required().messages({
     'any.required': 'Pickup Datetime is required',
     'any.invalid': 'Pickup Datetime format must be "yyyy-MM-dd HH:mm"'
   }),
@@ -58,7 +71,8 @@ const shuttleBookingSchema = Joi.object({
     'string.empty': 'Parking Id is a required field',
     'any.required': 'Parking Id is a required field',
     'string.pattern.base': 'Parking Id must be a valid Object ID'
-  })
+  }),
+  route: Joi.string().valid('airport-parking', 'parking-airport')
 })
 
 const idParamSchema = Joi.object({
@@ -67,4 +81,13 @@ const idParamSchema = Joi.object({
   })
 })
 
-module.exports = { shuttleBookingSchema, idParamSchema };
+const timetableQuerySchema = Joi.object({
+  date: Joi.string().custom(dateStringValidation, 'custom validation').required().messages({
+    'string.empty': 'Date is a required field',
+    'any.required': 'Date is a required field',
+    'any.invalid': 'Date format must be "yyyy-MM-dd"'
+  }),
+  route: Joi.string().valid('airport-parking', 'parking-airport')
+})
+
+module.exports = { shuttleBookingSchema, idParamSchema, timetableQuerySchema };
