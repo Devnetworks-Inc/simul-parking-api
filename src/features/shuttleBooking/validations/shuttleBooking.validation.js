@@ -72,7 +72,7 @@ const shuttleBookingSchema = Joi.object({
     'any.required': 'Parking Id is a required field',
     'string.pattern.base': 'Parking Id must be a valid Object ID'
   }),
-  route: Joi.string().valid('airport-parking', 'parking-airport')
+  route: Joi.string().valid('airport-parking', 'parking-airport').required()
 })
 
 const idParamSchema = Joi.object({
