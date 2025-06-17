@@ -2,7 +2,7 @@ const { Router } = require('express');
 const { asyncHandler } = require('../../../libs/core/handlers/async.handler');
 const { ShuttleBookingController } = require('../controller/shuttleBooking.controller');
 const { validateRequest } = require('../../../middleware/validateRequest');
-const { shuttleBookingSchema, idParamSchema } = require('../validations/shuttleBooking.validation');
+const { shuttleBookingSchema, idParamSchema, timetableQuerySchema } = require('../validations/shuttleBooking.validation');
 
 const controller = new ShuttleBookingController();
 const router = Router();
@@ -13,7 +13,12 @@ router
     validateRequest({ bodySchema: shuttleBookingSchema }),
     asyncHandler(async (req, res) => controller.create(req, res))
   )
-   .get(
+  .get(
+    '/timetable',
+    validateRequest({ querySchema: timetableQuerySchema }),
+    asyncHandler(async (req, res) => controller.getTimetable(req, res))
+  )
+  .get(
     '/:id',
     validateRequest({ paramsSchema: idParamSchema }),
     asyncHandler(async (req, res) => controller.getById(req, res))
