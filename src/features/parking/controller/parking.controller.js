@@ -20,9 +20,9 @@ class ParkingController {
         const updatedData = await Promise.all(
             data.map((d) => new Promise((resolve) => {
                 ShuttleBookingEntity.find({ parkingId: d._id })
-                .then(shuttleBookings =>
-                    resolve({...d, shuttleBookings})
-                )
+                    .then(shuttleBookings =>
+                        resolve({ ...d, shuttleBookings })
+                    )
             }))
         )
 
@@ -36,9 +36,21 @@ class ParkingController {
         this._responseHandler.sendSuccess(res, result);
     }
 
+    async getParkingSpace(req, res) {
+        const id = req.params.id;
+        const result = await this._service.getAllParkingSpace(id);
+        this._responseHandler.sendSuccess(res, result);
+    }
+
     async create(req, res) {
         const parkingModel = req.body;
         const created = await ParkingEntity.create(parkingModel)
+        this._responseHandler.sendCreated(res, created);
+    }
+
+    async createParkingSpace(req, res) {
+        const parkingSpaceModel = req.body;
+        const created = await this._service.createParkingSpace(parkingSpaceModel)
         this._responseHandler.sendCreated(res, created);
     }
 
