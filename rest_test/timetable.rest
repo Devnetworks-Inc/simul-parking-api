@@ -1,0 +1,23 @@
+POST http://localhost:8080/api/timetable
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiYjllZTI5OWJmNWYxYTU5MiIsImlhdCI6MTc0ODMyNzM1NiwiZXhwIjoxNzQ5MTkxMzU2fQ.RQCUVEFPP6yXPkxDR9iH0IfwFGCyMbem-7SeWVXi1co
+
+{
+    "time": "11:00",
+    "route": "airport-parking"
+}
+
+###
+GET http://localhost:8080/api/timetable
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiYjllZTI5OWJmNWYxYTU5MiIsImlhdCI6MTc0ODMyNzM1NiwiZXhwIjoxNzQ5MTkxMzU2fQ.RQCUVEFPP6yXPkxDR9iH0IfwFGCyMbem-7SeWVXi1co
+
+###
+PUT http://localhost:8080/api/timetable/6854b86b9f7972b6b55b3c71
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiYjllZTI5OWJmNWYxYTU5MiIsImlhdCI6MTc0ODMyNzM1NiwiZXhwIjoxNzQ5MTkxMzU2fQ.RQCUVEFPP6yXPkxDR9iH0IfwFGCyMbem-7SeWVXi1co
+
+{
+    "time": "11:00",
+    "route": "airport-parking"
+}
