@@ -4,32 +4,34 @@ const { ParkingController } = require('../controller/parking.controller');
 const { validateRequest } = require('../../../middleware/validateRequest');
 const { parkingSchema, parkingSpaceSchema } = require('../validations/parking.validation');
 const { idParamSchema } = require('../../../shared/schema');
+const validateToken = require('../../../middleware/validateToken');
 
 const controller = new ParkingController();
 const router = Router();
 
 router
-  .post(
-    '/',
-    validateRequest({ bodySchema: parkingSchema }),
-    asyncHandler(async (req, res) => controller.create(req, res))
+  .get(
+    '/space/:id',
+    validateRequest({ paramsSchema: idParamSchema }),
+    asyncHandler(async (req, res) => controller.getParkingSpace(req, res))
   )
+  .get(
+    '/',
+    asyncHandler(async (req, res) => controller.getAll(req, res))
+  );
+
+router
+  .use(validateToken)
   .post(
     '/space',
     validateRequest({ bodySchema: parkingSpaceSchema }),
     asyncHandler(async (req, res) => controller.createParkingSpace(req, res))
   )
-  .get(
+  .post(
     '/',
-    asyncHandler(async (req, res) => controller.getAll(req, res))
+    validateRequest({ bodySchema: parkingSchema }),
+    asyncHandler(async (req, res) => controller.create(req, res))
   )
-  .get(
-    '/space/:id',
-    validateRequest({ paramsSchema: idParamSchema }),
-    asyncHandler(async (req, res) => controller.getParkingSpace(req, res))
-  );
-
-router
   .put(
     '/:id',
     validateRequest({ bodySchema: parkingSchema, paramsSchema: idParamSchema }),

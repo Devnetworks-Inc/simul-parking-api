@@ -24,6 +24,13 @@ class ErrorHandler {
       return this.handleMongooseValidationError(err, res);
     }
 
+    if (err.code === 'invalid_token') {
+      return res.status(HTTP_STATUS.StatusCodes.UNAUTHORIZED).json({
+        status: 'error',
+        message: 'Invalid token',
+      });
+    }
+
     // Unknown server error
     res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       status: 'error',
