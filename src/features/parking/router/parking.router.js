@@ -2,7 +2,7 @@ const { Router } = require('express');
 const { asyncHandler } = require('../../../libs/core/handlers/async.handler');
 const { ParkingController } = require('../controller/parking.controller');
 const { validateRequest } = require('../../../middleware/validateRequest');
-const { parkingSchema } = require('../validations/parking.validation');
+const { parkingSchema, parkingSpaceSchema } = require('../validations/parking.validation');
 const { idParamSchema } = require('../../../shared/schema');
 const validateToken = require('../../../middleware/validateToken');
 
@@ -11,12 +11,22 @@ const router = Router();
 
 router
   .get(
+    '/space/:id',
+    validateRequest({ paramsSchema: idParamSchema }),
+    asyncHandler(async (req, res) => controller.getParkingSpace(req, res))
+  )
+  .get(
     '/',
     asyncHandler(async (req, res) => controller.getAll(req, res))
   );
 
 router
   .use(validateToken)
+  .post(
+    '/space',
+    validateRequest({ bodySchema: parkingSpaceSchema }),
+    asyncHandler(async (req, res) => controller.createParkingSpace(req, res))
+  )
   .post(
     '/',
     validateRequest({ bodySchema: parkingSchema }),
@@ -35,5 +45,5 @@ router
     '/:id',
     asyncHandler(async (req, res) => controller.delete(req, res))
   );
-  
+
 module.exports = { parkingRoutes: router };

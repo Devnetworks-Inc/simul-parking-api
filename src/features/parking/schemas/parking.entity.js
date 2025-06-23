@@ -9,6 +9,10 @@ const parkingSpaceSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  parkingId: {
+    type: mongoose.ObjectId,
+    required: true
+  }
 })
 
 const parkingSchema = new mongoose.Schema(
@@ -59,4 +63,5 @@ const parkingSchema = new mongoose.Schema(
 );
 
 const ParkingEntity = mongoose.model('parking', parkingSchema);
-module.exports = { ParkingEntity };
+const ParkingSpaceEntity = mongoose.model('parkingSpace', parkingSpaceSchema);
+module.exports = { ParkingEntity, ParkingSpaceEntity };

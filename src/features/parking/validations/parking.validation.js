@@ -3,6 +3,7 @@ const Joi = require('joi');
 const parkingSpaceSchema = Joi.object({
   spaceNumber: Joi.string().required(),
   isOccupied: Joi.boolean().default(false),
+  parkingId: Joi.string().required(),
 })
 
 const parkingSchema = Joi.object({
@@ -38,8 +39,8 @@ const parkingSchema = Joi.object({
   }),
   img: Joi.string(),
   parkingSpaces: Joi.array().items(
-     parkingSpaceSchema
+    parkingSpaceSchema
   ).unique('spaceNumber')
 });
 
-module.exports = { parkingSchema };
+module.exports = { parkingSchema, parkingSpaceSchema };
