@@ -4,11 +4,13 @@ const { validateRequest } = require('../../../middleware/validateRequest');
 const { timetableSchema } = require('../validations/timetable.validation');
 const { TimetableController } = require('../controller/timetable.controller');
 const { idParamSchema } = require('../../../shared/schema');
+const validateToken = require('../../../middleware/validateToken');
 
 const controller = new TimetableController();
 const router = Router();
 
 router
+  .use(validateToken)
   .post(
     '/',
     validateRequest({ bodySchema: timetableSchema }),

@@ -4,22 +4,24 @@ const { ParkingController } = require('../controller/parking.controller');
 const { validateRequest } = require('../../../middleware/validateRequest');
 const { parkingSchema } = require('../validations/parking.validation');
 const { idParamSchema } = require('../../../shared/schema');
+const validateToken = require('../../../middleware/validateToken');
 
 const controller = new ParkingController();
 const router = Router();
 
 router
-  .post(
-    '/',
-    validateRequest({ bodySchema: parkingSchema }),
-    asyncHandler(async (req, res) => controller.create(req, res))
-  )
   .get(
     '/',
     asyncHandler(async (req, res) => controller.getAll(req, res))
   );
 
 router
+  .use(validateToken)
+  .post(
+    '/',
+    validateRequest({ bodySchema: parkingSchema }),
+    asyncHandler(async (req, res) => controller.create(req, res))
+  )
   .put(
     '/:id',
     validateRequest({ bodySchema: parkingSchema, paramsSchema: idParamSchema }),
