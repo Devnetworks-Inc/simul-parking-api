@@ -37,7 +37,7 @@ class TimetableController {
   }
 
   async getAll(req, res) {
-    const shuttleBookings = await TimetableEntity.find().exec();
+    const shuttleBookings = await TimetableEntity.find().populate('parking').exec();
     this._responseHandler.sendSuccess(res, shuttleBookings);
   }
 
