@@ -7,17 +7,8 @@ const timetableSchema = new mongoose.Schema(
       required: true
     },
     route: {
-      type: String,
-      enum: ['parking-airport', 'airport-parking'],
-      required: true
-    },
-    parking: {
-      type : mongoose.Schema.ObjectId,
-      ref: 'parking',
-      required: true
-    },
-    airport: {
-      type : String,
+      type: mongoose.Schema.ObjectId,
+      ref: 'route',
       required: true
     }
   },
