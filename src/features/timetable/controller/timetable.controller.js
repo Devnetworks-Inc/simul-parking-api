@@ -7,10 +7,10 @@ class TimetableController {
   }
 
   async create(req, res) {
-    const { time } = req.body
-    const exist = await TimetableEntity.findOne({ time })
+    const { time, route } = req.body
+    const exist = await TimetableEntity.findOne({ time, route })
     if (exist) {
-      this._responseHandler.sendDynamicError(res, "Time already exist", 400)
+      this._responseHandler.sendDynamicError(res, "Time or route already exist", 400)
       return
     }
     const timetable = await new TimetableEntity(req.body).save()
@@ -37,7 +37,7 @@ class TimetableController {
   }
 
   async getAll(req, res) {
-    const shuttleBookings = await TimetableEntity.find().populate('parking').exec();
+    const shuttleBookings = await TimetableEntity.find().populate('route').exec();
     this._responseHandler.sendSuccess(res, shuttleBookings);
   }
 
