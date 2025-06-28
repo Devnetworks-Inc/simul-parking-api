@@ -6,8 +6,8 @@ class Config {
   constructor() {
     this.MONGO_URI = process.env.MONGO_URI || this.DEFAULT_MONGO_URI;
     console.log(this.MONGO_URI )
-    this.STRIPE_KEY = process.env.STRIPE_KEY || "sdfsdf";
-    this.STRIPE_ENDPOINT_SECRET = process.env.STRIPE_ENDPOINT_SECRET || "sd.fjksdfjk";
+    this.STRIPE_KEY = process.env.STRIPE_KEY || "temp stripe key";
+    this.STRIPE_ENDPOINT_SECRET = process.env.STRIPE_ENDPOINT_SECRET || "temp stripe endpoint secret";
     this.EMAIL_USERNAME = process.env.EMAIL_USERNAME;
     this.EMAIL_PASSWORD = process.env.EMAIL_PASSWORD;
     this.CLIENT_URL = process.env.CLIENT_URL;
