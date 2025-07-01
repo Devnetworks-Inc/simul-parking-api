@@ -160,6 +160,16 @@ class BookingController {
         bookingModel.bookingDate = new Date();
         bookingModel.parkingId = await this.generateUniqueParkingId()
         await bookingModel.save();
+        await ShuttleBookingEntity.create({
+            ...req.body.parkingToAirportShuttle,
+            parkingId: req.body.parkingId,
+            parkingBookingId: bookingModel._id
+        })
+        await ShuttleBookingEntity.create({
+            ...req.body.airportToParkingShuttle,
+            parkingId: req.body.parkingId,
+            parkingBookingId: bookingModel._id
+        })
         this._responseHandler.sendCreated(res, { sessionUrl: session.url });
     }
 
