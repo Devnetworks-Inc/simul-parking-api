@@ -91,7 +91,7 @@ const BookingSchema = new mongoose.Schema(
     },
     parkingPrice: {
       type: Number,
-      required: true
+      required: false
     },
     schemaVersion: {
       type: Number,
