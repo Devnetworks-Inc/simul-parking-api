@@ -65,17 +65,24 @@ class BookingController {
                 const comparisonDate = d.vehiclePickedUpDate ? new Date(d.vehiclePickedUpDate) : today;
                 const isPastPeriod = compareAsc(comparisonDate, d.endDatetime) === 1;
                 const shuttleBooking = await ShuttleBookingEntity.findOne({ parkingBookingId: d._id }).lean()
+
+                let subtotal = d.totalAmount
                 let daysPassed = 0
+                let parkingPriceOverstay = 0
 
                 if (isPastPeriod) {
                     daysPassed = Math.ceil(differenceInMinutes(comparisonDate, d.endDatetime) / 1440)
+                    parkingPriceOverstay = daysPassed * d.parkingPrice
+                    d.totalAmount = d.totalAmount + parkingPriceOverstay
                 }
 
                 resolve({
                     ...d,
                     isPastPeriod,
                     shuttleBooking,
-                    daysPassed
+                    daysPassed,
+                    subtotal,
+                    parkingPriceOverstay
                 })
             })()
         })))
@@ -100,9 +107,12 @@ class BookingController {
         const today = new Date()
         const comparisonDate = result.vehiclePickedUpDate ? new Date(result.vehiclePickedUpDate) : today;
         result.isPastPeriod = compareAsc(comparisonDate, result.endDatetime) === 1
-
+        result.subtotal = result.totalAmount
+        result.parkingPriceOverstay = 0
         if (result.isPastPeriod) {
             result.daysPassed = Math.ceil(differenceInMinutes(comparisonDate, result.endDatetime) / 1440)
+            result.parkingPriceOverstay = result.daysPassed * result.parkingPrice
+            result.totalAmount = result.totalAmount + result.parkingPriceOverstay
         }
 
         this._responseHandler.sendSuccess(res, result);
