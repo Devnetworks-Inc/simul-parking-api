@@ -102,7 +102,7 @@ class BookingController {
         const result = await this._service.getById(id);
         if (!result) throw new NotFoundError(APP_MESSAGES.BOOKING_NOT_FOUND);
 
-        const shuttleBooking = await ShuttleBookingEntity.findOne({ parkingBookingId: result._id }).lean()
+        const shuttleBooking = await ShuttleBookingEntity.find({ parkingBookingId: result._id }).lean()
         result.shuttleBooking = shuttleBooking
         const today = new Date()
         const comparisonDate = result.vehiclePickedUpDate ? new Date(result.vehiclePickedUpDate) : today;
