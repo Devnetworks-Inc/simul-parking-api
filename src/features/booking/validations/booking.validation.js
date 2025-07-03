@@ -69,7 +69,7 @@ const bookingSchema = Joi.object({
   //   'string.base': 'Parking Id must be a string',
   //   'string.empty': 'Parking Id cannot be an empty string',
   // }),
-  vehicleNumber: Joi.number(),
+  vehicleNumber: Joi.string(),
   brand: Joi.string(),
   parkingSpaceLocation,
   isVehiclePickedUp: Joi.boolean().optional(),
