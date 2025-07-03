@@ -132,6 +132,11 @@ class BookingController {
 
         const { endDatetime, startDatetime, parkingEstablishmentId } = bookingModel
 
+        if(!req.body.airportToParkingShuttle.airportGate){
+            this._responseHandler.sendDynamicError(res, "Airport Gate is required", 404)
+            return;
+        }
+
         const parking = await ParkingEntity.findById(parkingEstablishmentId)
         if (!parking) {
             this._responseHandler.sendDynamicError(res, "Parking Establishment does not exist", 404)
