@@ -48,7 +48,7 @@ const shuttleBookingSchema = new mongoose.Schema(
     },
     airportGate: {
       type: String,
-      required: true,
+      required: false,
     },
     parkingName: {
       type: String,

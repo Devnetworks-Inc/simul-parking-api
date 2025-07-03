@@ -133,7 +133,7 @@ class BookingController {
         const { endDatetime, startDatetime, parkingEstablishmentId } = bookingModel
 
         if(!req.body.airportToParkingShuttle.airportGate){
-            this._responseHandler.sendDynamicError(res, "Airport Gate is required", 404)
+            this._responseHandler.sendDynamicError(res, "Airport Gate is required", 400)
             return;
         }
 
