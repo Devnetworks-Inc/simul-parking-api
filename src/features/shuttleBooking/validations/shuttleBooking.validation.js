@@ -60,12 +60,12 @@ const shuttleBookingSchema = Joi.object({
     'any.required': 'Seats is a required field',
   }),
 
-  parkingBookingId: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required().messages({
-    'string.base': 'Parking Booking Id must be a string',
-    'string.empty': 'Parking Booking Id is a required field',
-    'any.required': 'Parking Booking Id is a required field',
-    'string.pattern.base': 'Parking Booking Id must be a valid Object ID'
-  }),
+  // parkingBookingId: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required().messages({
+  //   'string.base': 'Parking Booking Id must be a string',
+  //   'string.empty': 'Parking Booking Id is a required field',
+  //   'any.required': 'Parking Booking Id is a required field',
+  //   'string.pattern.base': 'Parking Booking Id must be a valid Object ID'
+  // }),
   parkingId: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required().messages({
     'string.base': 'Parking Id must be a string',
     'string.empty': 'Parking Id is a required field',
@@ -73,7 +73,7 @@ const shuttleBookingSchema = Joi.object({
     'string.pattern.base': 'Parking Id must be a valid Object ID'
   }),
   route: Joi.string().valid('airport-parking', 'parking-airport').required(),
-  airportGate: Joi.string().required(),
+  airportGate: Joi.string().optional(),
 })
 
 const idParamSchema = Joi.object({
