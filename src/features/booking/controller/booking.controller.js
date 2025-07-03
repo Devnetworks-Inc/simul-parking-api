@@ -40,7 +40,7 @@ class BookingController {
 
     async getAll(req, res) {
         const { page = 1, limit = 10, startDate, endDate } = req.query || {};
-        const filter = { schemaVersion: 2 }
+        const filter = { schemaVersion: { $gte: 2 } }
         let startDateFilter
         if (startDate) {
             startDateFilter = {}
@@ -139,7 +139,6 @@ class BookingController {
         bookingModel._id = new mongoose.Types.ObjectId();
         bookingModel.totalAmount = totalAmount
         bookingModel.parkingPrice = parking.price
-        bookingModel.schemaVersion = 2
 
         const checkout = {
             customer_email: bookingModel.email,

@@ -72,7 +72,8 @@ const shuttleBookingSchema = Joi.object({
     'any.required': 'Parking Id is a required field',
     'string.pattern.base': 'Parking Id must be a valid Object ID'
   }),
-  route: Joi.string().valid('airport-parking', 'parking-airport').required()
+  route: Joi.string().valid('airport-parking', 'parking-airport').required(),
+  airportGate: Joi.string().required(),
 })
 
 const idParamSchema = Joi.object({
@@ -90,4 +91,10 @@ const timetableQuerySchema = Joi.object({
   route: Joi.string().valid('airport-parking', 'parking-airport')
 })
 
-module.exports = { shuttleBookingSchema, idParamSchema, timetableQuerySchema };
+const shuttleBookingGetAllFilter = Joi.object({
+  startDate: Joi.date(),
+  endDate: Joi.date(),
+  route: Joi.string().valid('airport-parking', 'parking-airport')
+})
+
+module.exports = { shuttleBookingSchema, idParamSchema, timetableQuerySchema, shuttleBookingGetAllFilter };

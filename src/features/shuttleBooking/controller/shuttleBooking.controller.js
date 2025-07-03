@@ -11,12 +11,12 @@ class ShuttleBookingController {
 
   async create(req, res) {
     const { parkingBookingId, parkingId, pickupDatetime } = req.body
-  
+
     const [parkingBooking, parking] = await Promise.all([
       BookingDetailsEntity.findById(parkingBookingId),
       ParkingEntity.findById(parkingId)
     ])
-  
+
     if (!parkingBooking) {
       this._responseHandler.sendDynamicError(res, "Parking Booking does not exist", 404)
       return;
@@ -29,14 +29,15 @@ class ShuttleBookingController {
     let [dateStr, timeStr] = pickupDatetime.split(' ')
     dateStr = dateStr.split('-')
     timeStr = timeStr.split(':')
-  
+
     const date = new Date(+dateStr[0], +dateStr[1] - 1, +dateStr[2])
     date.setHours(+timeStr[0], +timeStr[1])
     req.body.pickupDatetime = date
+    req.body.parkingName = parking.name
 
     const shuttleBooking = new ShuttleBookingEntity(req.body);
     const created = await shuttleBooking.save();
-    
+
     this._responseHandler.sendCreated(res, created);
   }
 
@@ -54,10 +55,11 @@ class ShuttleBookingController {
     let [dateStr, timeStr] = pickupDatetime.split(' ')
     dateStr = dateStr.split('-')
     timeStr = timeStr.split(':')
-  
+
     const date = new Date(+dateStr[0], +dateStr[1] - 1, +dateStr[2])
     date.setHours(+timeStr[0], +timeStr[1])
     update.pickupDatetime = date
+    update.parkingName = parkingBooking.name
 
     const shuttleBooking = await ShuttleBookingEntity.findByIdAndUpdate(req.params.id, update, { returnDocument: 'after' });
     if (!shuttleBooking) {
@@ -85,13 +87,42 @@ class ShuttleBookingController {
     this._responseHandler.sendSuccess(res, shuttleBookings);
   }
 
+  async mobileGetAll(req, res) {
+    // const shuttleBookings = await ShuttleBookingEntity.aggregate([
+    //   {
+    //     $lookup: {
+    //       from: "parking",
+    //       localField: "parkingId",    // field in the orders collection
+    //       foreignField: "_id",  // field in the items collection
+    //       as: "parking"
+    //     },
+    //   },
+    //   { $unwind: '$parking' }
+    // ])
+    const { startDate, endDate, route } = req.query || {}
+    const filter = { route }
+    if (startDate) {
+      filter.pickupDatetime = {}
+      filter.pickupDatetime.$gte = startDate
+    }
+
+    if (endDate) {
+      filter.pickupDatetime = filter.pickupDatetime || {}
+      filter.pickupDatetime.$lte = endDate
+    }
+
+    const shuttleBookings = await ShuttleBookingEntity.find(filter).sort({ pickupDatetime: 1 }).exec();
+
+    this._responseHandler.sendSuccess(res, shuttleBookings);
+  }
+
   async getTimetable(req, res) {
     const { date, route } = req.query
     const [year, month, day] = date.split('-')
 
     // create date object based on server timezone which is set to Europe/Berlin
     const dateObj = new Date(+year, +month - 1, +day)
-  
+
     const start = startOfDay(dateObj)
     const end = endOfDay(dateObj)
 
@@ -105,7 +136,7 @@ class ShuttleBookingController {
 
     const timetable = shuttleBookings.reduce((arr, booking) => {
       const pickupTime = format(booking.pickupDatetime, 'HH:mm')
-  
+
       if (currentTime !== pickupTime) {
         currentTime = pickupTime
         currentTimeData = [booking]

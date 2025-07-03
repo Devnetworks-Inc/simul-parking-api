@@ -22,7 +22,7 @@ class Config {
   DEFAULT_MONGO_URI = 'mongodb://127.0.0.1:27017/parking';
   SECRET_KEY_ONE = 'njfg5894';
   SECRET_KEY_TWO = 'j39dk';
-  JWT_TOKEN = 'w90234urjkdfsj';
+  JWT_TOKEN = '12345';
 
 }
 
