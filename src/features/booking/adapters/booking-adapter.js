@@ -22,7 +22,9 @@ class BookingAdapter {
       checkoutSessionId,
       checkoutSessionPaymentDate,
       checkoutSessionFailedDate,
-      status
+      status,
+      vehicleNumber,
+      brand
     } = item;
 
     const [startDateStr, startTimeStr] = startDate.split(' ')
@@ -41,6 +43,8 @@ class BookingAdapter {
     result.email = email;
     result.phone = phone;
     result.departureAirport = departureAirport;
+    result.vehicleNumber = vehicleNumber;
+    result.brand = brand;
   
     result.startDate = new Date(Date.UTC(+startDateArr[0], +startDateArr[1] - 1, +startDateArr[2]));
     result.startDatetime = startDatetime
