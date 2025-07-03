@@ -65,17 +65,24 @@ class BookingController {
                 const comparisonDate = d.vehiclePickedUpDate ? new Date(d.vehiclePickedUpDate) : today;
                 const isPastPeriod = compareAsc(comparisonDate, d.endDatetime) === 1;
                 const shuttleBooking = await ShuttleBookingEntity.findOne({ parkingBookingId: d._id }).lean()
+
+                let subtotal = d.totalAmount
                 let daysPassed = 0
+                let parkingPriceOverstay = 0
 
                 if (isPastPeriod) {
                     daysPassed = Math.ceil(differenceInMinutes(comparisonDate, d.endDatetime) / 1440)
+                    parkingPriceOverstay = daysPassed * d.parkingPrice
+                    d.totalAmount = d.totalAmount + parkingPriceOverstay
                 }
 
                 resolve({
                     ...d,
                     isPastPeriod,
                     shuttleBooking,
-                    daysPassed
+                    daysPassed,
+                    subtotal,
+                    parkingPriceOverstay
                 })
             })()
         })))
@@ -95,14 +102,17 @@ class BookingController {
         const result = await this._service.getById(id);
         if (!result) throw new NotFoundError(APP_MESSAGES.BOOKING_NOT_FOUND);
 
-        const shuttleBooking = await ShuttleBookingEntity.findOne({ parkingBookingId: result._id }).lean()
+        const shuttleBooking = await ShuttleBookingEntity.find({ parkingBookingId: result._id }).lean()
         result.shuttleBooking = shuttleBooking
         const today = new Date()
         const comparisonDate = result.vehiclePickedUpDate ? new Date(result.vehiclePickedUpDate) : today;
         result.isPastPeriod = compareAsc(comparisonDate, result.endDatetime) === 1
-
+        result.subtotal = result.totalAmount
+        result.parkingPriceOverstay = 0
         if (result.isPastPeriod) {
             result.daysPassed = Math.ceil(differenceInMinutes(comparisonDate, result.endDatetime) / 1440)
+            result.parkingPriceOverstay = result.daysPassed * result.parkingPrice
+            result.totalAmount = result.totalAmount + result.parkingPriceOverstay
         }
 
         this._responseHandler.sendSuccess(res, result);
@@ -159,6 +169,16 @@ class BookingController {
         bookingModel.bookingDate = new Date();
         bookingModel.parkingId = await this.generateUniqueParkingId()
         await bookingModel.save();
+        await ShuttleBookingEntity.create({
+            ...req.body.parkingToAirportShuttle,
+            parkingId: req.body.parkingId,
+            parkingBookingId: bookingModel._id
+        })
+        await ShuttleBookingEntity.create({
+            ...req.body.airportToParkingShuttle,
+            parkingId: req.body.parkingId,
+            parkingBookingId: bookingModel._id
+        })
         this._responseHandler.sendCreated(res, { sessionUrl: session.url });
     }
 

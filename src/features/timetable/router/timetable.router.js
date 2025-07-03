@@ -10,15 +10,17 @@ const controller = new TimetableController();
 const router = Router();
 
 router
+  .get(
+    '/',
+    asyncHandler(async (req, res) => controller.getAll(req, res))
+  )
+
+router
   .use(validateToken)
   .post(
     '/',
     validateRequest({ bodySchema: timetableSchema }),
     asyncHandler(async (req, res) => controller.create(req, res))
-  )
-  .get(
-    '/',
-    asyncHandler(async (req, res) => controller.getAll(req, res))
   )
 
   .put(

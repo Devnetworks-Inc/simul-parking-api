@@ -46,7 +46,7 @@ const shuttleBookingSchema = Joi.object({
     'any.invalid': 'Pickup Datetime format must be "yyyy-MM-dd HH:mm"'
   }),
 
-  price: Joi.number().required().messages({
+  price: Joi.number().optional().messages({
     'number.base': 'price must be a number',
     'any.required': 'price is a required field',
   }),

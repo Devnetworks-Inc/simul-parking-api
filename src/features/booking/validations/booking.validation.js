@@ -1,5 +1,6 @@
 const Joi = require('joi');
 const { dateStringValidation, idSchema } = require('../../../shared/schema');
+const { shuttleBookingSchema } = require('../../shuttleBooking/validations/shuttleBooking.validation');
 
 const parkingSpaceLocation = Joi.string().optional().messages({
   'string.base': 'Parking Space Location must be a string',
@@ -72,6 +73,8 @@ const bookingSchema = Joi.object({
   brand: Joi.string(),
   parkingSpaceLocation,
   isVehiclePickedUp: Joi.boolean().optional(),
+  parkingToAirportShuttle : shuttleBookingSchema,
+  airportToParkingShuttle : shuttleBookingSchema
 });
 
 module.exports = { bookingSchema, parkingSpaceLocation };
