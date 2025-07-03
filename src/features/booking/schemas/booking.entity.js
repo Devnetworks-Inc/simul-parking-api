@@ -99,7 +99,10 @@ const BookingSchema = new mongoose.Schema(
     },
     vehicleNumber: String,
     brand: String,
-    parkingSpaceLocation: String,
+    parkingSpaceLocation: {
+      type: mongoose.ObjectId,
+      ref: 'parkingSpace'
+    },
     isVehiclePickedUp: Boolean,
     vehiclePickedUpDate: Date,
     checkoutSessionId: String,
