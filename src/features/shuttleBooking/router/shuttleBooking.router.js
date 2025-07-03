@@ -2,11 +2,17 @@ const { Router } = require('express');
 const { asyncHandler } = require('../../../libs/core/handlers/async.handler');
 const { ShuttleBookingController } = require('../controller/shuttleBooking.controller');
 const { validateRequest } = require('../../../middleware/validateRequest');
-const { shuttleBookingSchema, idParamSchema, timetableQuerySchema } = require('../validations/shuttleBooking.validation');
+const { shuttleBookingSchema, idParamSchema, timetableQuerySchema, shuttleBookingGetAllFilter } = require('../validations/shuttleBooking.validation');
 const validateToken = require('../../../middleware/validateToken');
 
 const controller = new ShuttleBookingController();
 const router = Router();
+
+router.get(
+  '/mobile',
+  validateRequest({ querySchema: shuttleBookingGetAllFilter }),
+  asyncHandler((req, res) => controller.mobileGetAll(req, res))
+)
 
 router
   .use(validateToken)

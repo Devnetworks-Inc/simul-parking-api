@@ -42,7 +42,12 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiY
 ###
 GET http://localhost:8080/api/shuttle-booking/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzU1YmJiYjllZTI5OWJmNWYxYTU5MiIsImlhdCI6MTc0ODMyNzM1NiwiZXhwIjoxNzQ5MTkxMzU2fQ.RQCUVEFPP6yXPkxDR9iH0IfwFGCyMbem-7SeWVXi1co
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NTE1MDQ2ODMsImV4cCI6MTc1MjM2ODY4M30.FNw5akMVDKlvXM3lAAuPZGzT5V46jdNQfwS1tqqjlHY
+
+###
+GET http://localhost:8080/api/shuttle-booking/mobile?
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NTE0NjQ2MjUsImV4cCI6MTc1MjMyODYyNX0.0ZHFv23zdsy8ac5OVKKF9XOaov9EBRskRPJR1Mid9d8
 
 ###
 DELETE http://localhost:8080/api/shuttle-booking/683d837feb20dff25adf6a64

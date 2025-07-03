@@ -95,9 +95,10 @@ const BookingSchema = new mongoose.Schema(
     },
     schemaVersion: {
       type: Number,
-      default: 2
+      default: 2.1
     },
     vehicleNumber: String,
+    brand: String,
     parkingSpaceLocation: String,
     isVehiclePickedUp: Boolean,
     vehiclePickedUpDate: Date,

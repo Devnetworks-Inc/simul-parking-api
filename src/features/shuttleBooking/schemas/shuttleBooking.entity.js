@@ -45,7 +45,25 @@ const shuttleBookingSchema = new mongoose.Schema(
     route: {
       type: String,
       enum: ['parking-airport', 'airport-parking'],
-    }
+    },
+    airportGate: {
+      type: String,
+      required: true,
+    },
+    parkingName: {
+      type: String,
+      required: true
+    },
+    parkingPaymentStatus: {
+      type: String,
+      enum: ['paid', 'processing', 'failed'],
+      default: 'processing'
+    },
+    isFulfilled: {
+      type: Boolean,
+      default: false
+    },
+    fulfilledDate: Date
   },
   {
     collection: 'shuttleBooking',
