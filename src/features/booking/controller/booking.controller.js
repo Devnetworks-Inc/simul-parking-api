@@ -7,7 +7,7 @@ const { BookingAdapter } = require("../adapters/booking-adapter");
 const { bookingSchema } = require("../validations/booking.validation");
 const { config } = require('../../../configs/config');
 const { default: mongoose } = require("mongoose");
-const { ParkingEntity } = require("../../parking/schemas/parking.entity");
+const { ParkingEntity, ParkingSpaceEntity } = require("../../parking/schemas/parking.entity");
 const { BookingDetailsEntity } = require("../schemas/booking.entity");
 const { ShuttleBookingEntity } = require("../../shuttleBooking/schemas/shuttleBooking.entity");
 const stripe = require('stripe')(config.STRIPE_KEY)
@@ -55,7 +55,7 @@ class BookingController {
         }
         const skip = (page - 1) * limit;
         const [data, total] = await Promise.all([
-            BookingDetailsEntity.find(filter).skip(skip).limit(limit).lean(),
+            BookingDetailsEntity.find(filter).skip(skip).limit(limit).populate('parkingSpaceLocation').lean(),
             BookingDetailsEntity.countDocuments(filter)
         ])
         const today = new Date()
@@ -262,14 +262,16 @@ class BookingController {
         const parkingBooking = await BookingDetailsEntity.findByIdAndUpdate(id, {
             isVehiclePickedUp,
             vehiclePickedUpDate: isVehiclePickedUp ? Date.now() : null
-        }, { returnDocument: 'after' })
+        }, { returnDocument: 'after' }).populate('parkingSpaceLocation')
 
         if (!parkingBooking) {
             this._responseHandler.sendDynamicError(res, "Parking Booking does not exist", 404)
             return;
         }
 
-
+        const parkingSpace = await ParkingSpaceEntity.findById(parkingBooking?.parkingSpaceLocation?._id);
+        parkingSpace.isOccupied = false;
+        await parkingSpace.save()
 
         // parkingBooking.isVehiclePickedUp = isVehiclePickedUp
         // parkingBooking.vehiclePickedUpDate = isVehiclePickedUp ? Date.now() : null
@@ -286,6 +288,13 @@ class BookingController {
             this._responseHandler.sendDynamicError(res, "Parking Booking does not exist", 404)
             return;
         }
+
+        const parkingSpace = await ParkingSpaceEntity.findById(parkingSpaceLocation);
+        if (!parkingSpace) {
+            this._responseHandler.sendDynamicError(res, "Parking Space does not exist", 404)
+        }
+        parkingSpace.isOccupied = true;
+        await parkingSpace.save();
 
         parkingBooking.parkingSpaceLocation = parkingSpaceLocation
         const result = await parkingBooking.save()
