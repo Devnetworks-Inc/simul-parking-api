@@ -50,10 +50,10 @@ const shuttleBookingSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
-    parkingName: {
-      type: String,
-      required: true
-    },
+    // parkingName: {
+    //   type: String,
+    //   required: true
+    // },
     parkingPaymentStatus: {
       type: String,
       enum: ['paid', 'processing', 'failed'],
