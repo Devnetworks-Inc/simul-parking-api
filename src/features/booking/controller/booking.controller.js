@@ -275,9 +275,10 @@ class BookingController {
         }
 
         const parkingSpace = await ParkingSpaceEntity.findById(parkingBooking?.parkingSpaceLocation?._id);
-        parkingSpace.isOccupied = false;
-        await parkingSpace.save()
-
+        if (parkingSpace) {
+            parkingSpace.isOccupied = false;
+            await parkingSpace.save()
+        }
         // parkingBooking.isVehiclePickedUp = isVehiclePickedUp
         // parkingBooking.vehiclePickedUpDate = isVehiclePickedUp ? Date.now() : null
         // const result = await parkingBooking.save()
