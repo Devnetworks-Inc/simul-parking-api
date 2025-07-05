@@ -87,7 +87,7 @@ const BookingSchema = new mongoose.Schema(
     },
     bookingDate: {
       type: Date,
-      required: true
+      default: new Date(),
     },
     parkingPrice: {
       type: Number,
