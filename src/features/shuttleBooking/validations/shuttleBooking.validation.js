@@ -97,4 +97,36 @@ const shuttleBookingGetAllFilter = Joi.object({
   route: Joi.string().valid('airport-parking', 'parking-airport')
 })
 
-module.exports = { shuttleBookingSchema, idParamSchema, timetableQuerySchema, shuttleBookingGetAllFilter };
+const shuttleBookingParkingSpaceUpdateSchema = Joi.object({
+  shuttleBookingId: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required().messages({
+    'string.base': 'Shuttle Booking Id must be a string',
+    'string.empty': 'Shuttle Booking Id is a required field',
+    'any.required': 'Shuttle Booking Id is a required field',
+    'string.pattern.base': 'Shuttle Booking Id must be a valid Object ID'
+  }),
+  parkingSpaceId: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required().messages({
+    'string.base': 'Parking Space Id must be a string',
+    'string.empty': 'Parking Space Id is a required field',
+    'any.required': 'Parking Space Id is a required field',
+    'string.pattern.base': 'Parking Space Id must be a valid Object ID'
+  }),
+})
+
+const shuttleBookingVehiclePickedUpSchema = Joi.object({
+  shuttleBookingId: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required().messages({
+    'string.base': 'Shuttle Booking Id must be a string',
+    'string.empty': 'Shuttle Booking Id is a required field',
+    'any.required': 'Shuttle Booking Id is a required field',
+    'string.pattern.base': 'Shuttle Booking Id must be a valid Object ID'
+  }),
+  isVehiclePickedUp: Joi.boolean().required(),
+})
+
+module.exports = {
+  shuttleBookingSchema,
+  idParamSchema,
+  timetableQuerySchema,
+  shuttleBookingGetAllFilter,
+  shuttleBookingParkingSpaceUpdateSchema,
+  shuttleBookingVehiclePickedUpSchema
+};

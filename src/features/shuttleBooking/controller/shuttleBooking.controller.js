@@ -1,7 +1,7 @@
 const { format, startOfDay, endOfDay } = require("date-fns");
 const { ResponseHandler } = require("../../../libs/core/api-responses/response.handler");
 const { BookingDetailsEntity } = require("../../booking/schemas/booking.entity");
-const { ParkingEntity } = require("../../parking/schemas/parking.entity");
+const { ParkingEntity, ParkingSpaceEntity } = require("../../parking/schemas/parking.entity");
 const { ShuttleBookingEntity } = require("../schemas/shuttleBooking.entity");
 
 class ShuttleBookingController {
@@ -70,6 +70,63 @@ class ShuttleBookingController {
     this._responseHandler.sendUpdated(res, shuttleBooking);
   }
 
+  async setParkingSpaceLocation(req, res) {
+    const { shuttleBookingId, parkingSpaceId } = req.body;
+
+    const shuttleBooking = await ShuttleBookingEntity.findById(shuttleBookingId)
+    if (!shuttleBooking) {
+      this._responseHandler.sendDynamicError(res, "Shuttle Booking does not exist", 404)
+      return;
+    }
+
+    const parkingSpace = await ParkingSpaceEntity.findByIdAndUpdate(parkingSpaceId, {
+      isOccupied: true
+    });
+    if (!parkingSpace) {
+      this._responseHandler.sendDynamicError(res, "Parking Space does not exist", 404)
+      return
+    }
+
+    const promises = []
+
+    // if previous shuttle booking space number is changed
+    if (shuttleBooking.spaceNumber && shuttleBooking.spaceNumber !== parkingSpace.spaceNumber) {
+      promises.push(ParkingSpaceEntity.findOneAndUpdate({ spaceNumber: shuttleBooking.spaceNumber }, { isOccupied: false }))
+    }
+
+    promises.push(ShuttleBookingEntity.updateMany({ parkingBookingId: shuttleBooking.parkingBookingId }, { spaceNumber: parkingSpace.spaceNumber }))
+    promises.push(BookingDetailsEntity.findByIdAndUpdate(shuttleBooking.parkingBookingId, { parkingSpaceLocation: parkingSpace._id }))
+
+    await Promise.all(promises)
+
+    this._responseHandler.sendUpdated(res, { ...shuttleBooking.toJSON(), spaceNumber: parkingSpace.spaceNumber });
+  }
+
+  async setVehiclePickedUp(req, res) {
+    const { shuttleBookingId, isVehiclePickedUp } = req.body;
+  
+    const shuttleBooking = await ShuttleBookingEntity.findById(shuttleBookingId)
+    if (!shuttleBooking) {
+      this._responseHandler.sendDynamicError(res, "Shuttle Booking does not exist", 404)
+      return;
+    }
+
+    const today = new Date()
+
+    const parkingBooking = await BookingDetailsEntity.findByIdAndUpdate(shuttleBooking.parkingBookingId, {
+      isVehiclePickedUp,
+      vehiclePickedUpDate: isVehiclePickedUp ? today : null
+    }, { returnDocument: 'after' })
+
+    if (parkingBooking?.parkingSpaceLocation) {
+      await ParkingSpaceEntity.findByIdAndUpdate(parkingBooking.parkingSpaceLocation, {isOccupied: false})
+    }
+
+    const updatedShuttleBooking = await ShuttleBookingEntity.findByIdAndUpdate(shuttleBookingId, { vehiclePickedUpDate: today }, { returnDocument: 'after' })
+
+    this._responseHandler.sendUpdated(res, updatedShuttleBooking);
+  }
+
   async getById(req, res) {
     const { id } = req.params
 
@@ -88,17 +145,6 @@ class ShuttleBookingController {
   }
 
   async mobileGetAll(req, res) {
-    // const shuttleBookings = await ShuttleBookingEntity.aggregate([
-    //   {
-    //     $lookup: {
-    //       from: "parking",
-    //       localField: "parkingId",    // field in the orders collection
-    //       foreignField: "_id",  // field in the items collection
-    //       as: "parking"
-    //     },
-    //   },
-    //   { $unwind: '$parking' }
-    // ])
     const { startDate, endDate, route } = req.query || {}
     const filter = { route }
     if (startDate) {
@@ -110,8 +156,22 @@ class ShuttleBookingController {
       filter.pickupDatetime = filter.pickupDatetime || {}
       filter.pickupDatetime.$lte = endDate
     }
+    console.log({ filter })
+    // const shuttleBookings = await ShuttleBookingEntity.aggregate([
+    //   { $match: filter },
+    //   {
+    //     $lookup: {
+    //       from: "parking",
+    //       localField: "parkingId",    // field in the orders collection
+    //       foreignField: "_id",  // field in the items collection
+    //       as: "parking"
+    //     },
+    //   },
+    //   { $unwind: '$parking' }
+    // ])
 
     const shuttleBookings = await ShuttleBookingEntity.find(filter).sort({ pickupDatetime: 1 }).exec();
+    console.log(shuttleBookings)
 
     this._responseHandler.sendSuccess(res, shuttleBookings);
   }
