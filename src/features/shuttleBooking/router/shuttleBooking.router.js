@@ -45,7 +45,7 @@ router
   .put(
     '/picked-up',
     validateRequest({ bodySchema: shuttleBookingVehiclePickedUpSchema }),
-    asyncHandler(async (req, res) => controller.updateVehiclePickedUp(req, res))
+    asyncHandler(async (req, res) => controller.setVehiclePickedUp(req, res))
   )
 
   .put(
