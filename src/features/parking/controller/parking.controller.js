@@ -4,6 +4,7 @@ const APP_MESSAGES = require("../../../shared/messages/app-messages");
 const { ParkingService } = require("../services/parking.service");
 const { ParkingAdapter } = require("../adapters/parking-adapter");
 const { ParkingEntity } = require("../schemas/parking.entity");
+const { RouteEntity } = require("../../timetable/schemas/route.entity");
 const { ShuttleBookingEntity } = require("../../shuttleBooking/schemas/shuttleBooking.entity");
 
 class ParkingController {
@@ -71,6 +72,10 @@ class ParkingController {
         const id = req.params.id;
         const result = await this._service.deleteParking(id);
         if (!result) throw new NotFoundError(APP_MESSAGES.BOOKING_NOT_FOUND);
+
+         // Delete associated routes
+        await RouteEntity.deleteMany({ parking: id });
+
         this._responseHandler.sendDeleted(res);
     }
 }
