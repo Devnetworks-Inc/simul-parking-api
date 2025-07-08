@@ -59,11 +59,8 @@ const shuttleBookingSchema = new mongoose.Schema(
       enum: ['paid', 'processing', 'failed'],
       default: 'processing'
     },
-    isFulfilled: {
-      type: Boolean,
-      default: false
-    },
-    fulfilledDate: Date
+    spaceNumber: String,
+    vehiclePickedUpDate: Date,
   },
   {
     collection: 'shuttleBooking',
