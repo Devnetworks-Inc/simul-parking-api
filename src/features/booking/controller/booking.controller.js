@@ -215,7 +215,8 @@ class BookingController {
             //The Epoch time in seconds at which the Checkout Session will expire
             expires_at: expiresAtEpoch,
             success_url: `${originUrl}/${success_route}?bookingId=${metadata.booking_id}&session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${originUrl}/${cancel_route || ''}`,
+            // cancel_url: `${originUrl}/${cancel_route || ''}`,
+            cancel_url: `${originUrl}`,
         })
 
         return session
