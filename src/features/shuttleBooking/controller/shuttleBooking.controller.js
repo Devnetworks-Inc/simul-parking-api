@@ -123,6 +123,7 @@ class ShuttleBookingController {
     }
 
     const updatedShuttleBooking = await ShuttleBookingEntity.findByIdAndUpdate(shuttleBookingId, { vehiclePickedUpDate: today }, { returnDocument: 'after' })
+    console.log({updatedShuttleBooking})
 
     this._responseHandler.sendUpdated(res, updatedShuttleBooking);
   }
@@ -130,11 +131,14 @@ class ShuttleBookingController {
   async getById(req, res) {
     const { id } = req.params
 
-    const shuttleBooking = await ShuttleBookingEntity.findById(id);
+    const shuttleBooking = await ShuttleBookingEntity.findById(id).lean();
     if (!shuttleBooking) {
       this._responseHandler.sendDynamicError(res, "Shuttle Booking does not exist", 404)
       return;
     }
+
+    const parkingBooking = await BookingDetailsEntity.findById(shuttleBooking.parkingBookingId)
+    shuttleBooking.parkingBooking = parkingBooking
 
     this._responseHandler.sendSuccess(res, shuttleBooking);
   }
