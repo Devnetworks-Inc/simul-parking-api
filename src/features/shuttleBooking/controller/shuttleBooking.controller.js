@@ -1,4 +1,4 @@
-const { format, startOfDay, endOfDay } = require("date-fns");
+const { format, startOfDay, endOfDay, compareAsc } = require("date-fns");
 const { ResponseHandler } = require("../../../libs/core/api-responses/response.handler");
 const { BookingDetailsEntity } = require("../../booking/schemas/booking.entity");
 const { ParkingEntity, ParkingSpaceEntity } = require("../../parking/schemas/parking.entity");
@@ -138,6 +138,16 @@ class ShuttleBookingController {
     }
 
     const parkingBooking = await BookingDetailsEntity.findById(shuttleBooking.parkingBookingId)
+    const today = new Date()
+    const comparisonDate = parkingBooking.vehiclePickedUpDate ? new Date(parkingBooking.vehiclePickedUpDate) : today;
+    parkingBooking.isPastPeriod = compareAsc(comparisonDate, parkingBooking.endDatetime) === 1
+    parkingBooking.subtotal = parkingBooking.totalAmount
+    parkingBooking.parkingPriceOverstay = 0
+    if (parkingBooking.isPastPeriod) {
+        parkingBooking.daysPassed = Math.ceil(differenceInMinutes(comparisonDate, parkingBooking.endDatetime) / 1440)
+        parkingBooking.parkingPriceOverstay = parkingBooking.daysPassed * parkingBooking.parkingPrice
+        parkingBooking.totalAmount = parkingBooking.totalAmount + parkingBooking.parkingPriceOverstay
+    }
     shuttleBooking.parkingBooking = parkingBooking
 
     this._responseHandler.sendSuccess(res, shuttleBooking);
