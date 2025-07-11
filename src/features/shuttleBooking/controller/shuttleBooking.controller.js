@@ -1,4 +1,4 @@
-const { format, startOfDay, endOfDay, compareAsc } = require("date-fns");
+const { format, startOfDay, endOfDay, compareAsc, addHours } = require("date-fns");
 const { ResponseHandler } = require("../../../libs/core/api-responses/response.handler");
 const { BookingDetailsEntity } = require("../../booking/schemas/booking.entity");
 const { ParkingEntity, ParkingSpaceEntity } = require("../../parking/schemas/parking.entity");
@@ -138,6 +138,10 @@ class ShuttleBookingController {
     }
 
     const parkingBooking = await BookingDetailsEntity.findById(shuttleBooking.parkingBookingId)
+    if (!parkingBooking) {
+      this._responseHandler.sendDynamicError(res, "Parking Booking does not exist", 404)
+      return;
+    }
     const today = new Date()
     const comparisonDate = parkingBooking.vehiclePickedUpDate ? new Date(parkingBooking.vehiclePickedUpDate) : today;
     parkingBooking.isPastPeriod = compareAsc(comparisonDate, parkingBooking.endDatetime) === 1
@@ -159,8 +163,15 @@ class ShuttleBookingController {
   }
 
   async mobileGetAll(req, res) {
-    const { startDate, endDate, route } = req.query || {}
-    const filter = { route }
+    const today = new Date()
+    const {
+      startDate = addHours(today, -1),
+      endDate = addHours(today, 1),
+      route
+    } = req.query || {}
+
+    const filter = {}
+  
     if (startDate) {
       filter.pickupDatetime = {}
       filter.pickupDatetime.$gte = startDate
@@ -184,7 +195,15 @@ class ShuttleBookingController {
     //   { $unwind: '$parking' }
     // ])
 
-    const shuttleBookings = await ShuttleBookingEntity.find(filter).sort({ pickupDatetime: 1 }).exec();
+    const $or = [filter]
+    if (route === 'airport-parking') {
+      $or.push({
+        vehiclePickedUpDate: null,
+        pickupDatetime: { $lte: today },
+      })
+    }
+
+    const shuttleBookings = await ShuttleBookingEntity.find({ route, $or }).sort({ pickupDatetime: 1 }).exec();
     console.log(shuttleBookings)
 
     this._responseHandler.sendSuccess(res, shuttleBookings);
