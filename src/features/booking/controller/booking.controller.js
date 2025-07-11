@@ -10,6 +10,7 @@ const { default: mongoose } = require("mongoose");
 const { ParkingEntity, ParkingSpaceEntity } = require("../../parking/schemas/parking.entity");
 const { BookingDetailsEntity } = require("../schemas/booking.entity");
 const { ShuttleBookingEntity } = require("../../shuttleBooking/schemas/shuttleBooking.entity");
+const { datetimeStringToDateObject } = require("../../../shared/utils/helpers");
 const stripe = require('stripe')(config.STRIPE_KEY)
 
 class BookingController {
@@ -174,13 +175,18 @@ class BookingController {
         bookingModel.bookingDate = new Date();
         bookingModel.parkingId = await this.generateUniqueParkingId()
         await bookingModel.save();
+
+        const { parkingToAirportShuttle, airportToParkingShuttle } = req.body
+        parkingToAirportShuttle.pickupDatetime = datetimeStringToDateObject(parkingToAirportShuttle.pickupDatetime)
+        airportToParkingShuttle.pickupDatetime = datetimeStringToDateObject(airportToParkingShuttle.pickupDatetime)
+
         await ShuttleBookingEntity.create({
-            ...req.body.parkingToAirportShuttle,
+            ...parkingToAirportShuttle,
             parkingId: req.body.parkingId,
             parkingBookingId: bookingModel._id
         })
         await ShuttleBookingEntity.create({
-            ...req.body.airportToParkingShuttle,
+            ...airportToParkingShuttle,
             parkingId: req.body.parkingId,
             parkingBookingId: bookingModel._id
         })
