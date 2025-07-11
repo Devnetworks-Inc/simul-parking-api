@@ -168,7 +168,8 @@ class ShuttleBookingController {
     const today = new Date()
     const {
       startDate = addHours(today, -1),
-      endDate = addHours(today, 1),
+      // endDate = addHours(today, 1),
+      endDate = addHours(today, endOfDay(today), 1),
       route
     } = req.query || {}
 
