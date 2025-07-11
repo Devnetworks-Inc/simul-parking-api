@@ -163,6 +163,8 @@ class ShuttleBookingController {
   }
 
   async mobileGetAll(req, res) {
+    console.log('req.body', req.body)
+    console.log('req.query', req.query)
     const today = new Date()
     const {
       startDate = addHours(today, -1),
