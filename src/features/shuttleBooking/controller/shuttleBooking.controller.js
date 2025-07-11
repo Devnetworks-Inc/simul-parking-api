@@ -1,4 +1,4 @@
-const { format, startOfDay, endOfDay, compareAsc, addHours } = require("date-fns");
+const { format, startOfDay, endOfDay, compareAsc, addHours, differenceInMinutes } = require("date-fns");
 const { ResponseHandler } = require("../../../libs/core/api-responses/response.handler");
 const { BookingDetailsEntity } = require("../../booking/schemas/booking.entity");
 const { ParkingEntity, ParkingSpaceEntity } = require("../../parking/schemas/parking.entity");
