@@ -61,6 +61,7 @@ const shuttleBookingSchema = new mongoose.Schema(
     },
     spaceNumber: String,
     vehiclePickedUpDate: Date,
+    spaceNumberMarkedDate: Date,
   },
   {
     collection: 'shuttleBooking',

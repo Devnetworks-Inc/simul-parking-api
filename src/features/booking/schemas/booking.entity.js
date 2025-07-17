@@ -105,6 +105,7 @@ const BookingSchema = new mongoose.Schema(
     },
     isVehiclePickedUp: Boolean,
     vehiclePickedUpDate: Date,
+    spaceNumberMarkedDate: Date,
     checkoutSessionId: String,
     checkoutSessionPaymentDate: Date,
     checkoutSessionFailedDate: Date,

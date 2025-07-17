@@ -1,4 +1,4 @@
-const { format, startOfDay, endOfDay, compareAsc, addHours } = require("date-fns");
+const { format, startOfDay, endOfDay, compareAsc, addHours, differenceInMinutes } = require("date-fns");
 const { ResponseHandler } = require("../../../libs/core/api-responses/response.handler");
 const { BookingDetailsEntity } = require("../../booking/schemas/booking.entity");
 const { ParkingEntity, ParkingSpaceEntity } = require("../../parking/schemas/parking.entity");
@@ -88,14 +88,22 @@ class ShuttleBookingController {
     }
 
     const promises = []
+    const today = new Date()
 
     // if previous shuttle booking space number is changed
     if (shuttleBooking.spaceNumber && shuttleBooking.spaceNumber !== parkingSpace.spaceNumber) {
       promises.push(ParkingSpaceEntity.findOneAndUpdate({ spaceNumber: shuttleBooking.spaceNumber }, { isOccupied: false }))
     }
 
-    promises.push(ShuttleBookingEntity.updateMany({ parkingBookingId: shuttleBooking.parkingBookingId }, { spaceNumber: parkingSpace.spaceNumber }))
-    promises.push(BookingDetailsEntity.findByIdAndUpdate(shuttleBooking.parkingBookingId, { parkingSpaceLocation: parkingSpace._id }))
+    promises.push(ShuttleBookingEntity.updateMany(
+      { parkingBookingId: shuttleBooking.parkingBookingId },
+      { spaceNumber: parkingSpace.spaceNumber, spaceNumberMarkedDate: today }
+    ))
+
+    promises.push(BookingDetailsEntity.findByIdAndUpdate(
+      shuttleBooking.parkingBookingId,
+      { parkingSpaceLocation: parkingSpace._id, spaceNumberMarkedDate: today }
+    ))
 
     await Promise.all(promises)
 
@@ -137,7 +145,7 @@ class ShuttleBookingController {
       return;
     }
 
-    const parkingBooking = await BookingDetailsEntity.findById(shuttleBooking.parkingBookingId)
+    const parkingBooking = await BookingDetailsEntity.findById(shuttleBooking.parkingBookingId).lean()
     if (!parkingBooking) {
       this._responseHandler.sendDynamicError(res, "Parking Booking does not exist", 404)
       return;
@@ -165,7 +173,7 @@ class ShuttleBookingController {
   async mobileGetAll(req, res) {
     const today = new Date()
     const {
-      startDate = addHours(today, -1),
+      startDate,
       endDate = addHours(today, 1),
       route
     } = req.query || {}
@@ -181,7 +189,13 @@ class ShuttleBookingController {
       filter.pickupDatetime = filter.pickupDatetime || {}
       filter.pickupDatetime.$lte = endDate
     }
-    console.log({ filter })
+
+    if (route === 'airport-parking') {
+      filter.vehiclePickedUpDate = null
+    }
+    else {
+      filter.spaceNumber = null
+    }
     // const shuttleBookings = await ShuttleBookingEntity.aggregate([
     //   { $match: filter },
     //   {
@@ -198,8 +212,11 @@ class ShuttleBookingController {
     const $or = [filter]
     if (route === 'airport-parking') {
       $or.push({
-        vehiclePickedUpDate: null,
-        pickupDatetime: { $lte: today },
+        vehiclePickedUpDate: { $gte: addHours(today, -1) },
+      })
+    } else {
+      $or.push({
+        spaceNumberMarkedDate: { $gte: addHours(today, -1) },
       })
     }
 
