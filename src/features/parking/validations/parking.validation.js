@@ -7,6 +7,10 @@ const parkingSpaceSchema = Joi.object({
   parkingId: Joi.string().required(),
 })
 
+const parkingSpaceUpdateNumberSchema = Joi.object({
+  spaceNumber: Joi.string().required()
+})
+
 const spaceIdParamSchema = Joi.object({
   spaceId: idSchema.messages({
     'string.pattern.base': 'Space Id must be a valid Object ID'
@@ -50,4 +54,4 @@ const parkingSchema = Joi.object({
   ).unique('spaceNumber')
 });
 
-module.exports = { parkingSchema, parkingSpaceSchema, spaceIdParamSchema };
+module.exports = { parkingSchema, parkingSpaceSchema, parkingSpaceUpdateNumberSchema, spaceIdParamSchema };

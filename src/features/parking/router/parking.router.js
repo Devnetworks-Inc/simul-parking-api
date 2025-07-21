@@ -2,7 +2,7 @@ const { Router } = require('express');
 const { asyncHandler } = require('../../../libs/core/handlers/async.handler');
 const { ParkingController } = require('../controller/parking.controller');
 const { validateRequest } = require('../../../middleware/validateRequest');
-const { parkingSchema, parkingSpaceSchema, spaceIdParamSchema } = require('../validations/parking.validation');
+const { parkingSchema, parkingSpaceSchema, parkingSpaceUpdateNumberSchema, spaceIdParamSchema } = require('../validations/parking.validation');
 const { idParamSchema } = require('../../../shared/schema');
 const validateToken = require('../../../middleware/validateToken');
 
@@ -34,7 +34,7 @@ router
   )
   .put(
     '/space/:spaceId',
-    validateRequest({ paramsSchema: spaceIdParamSchema, bodySchema: parkingSpaceSchema }),
+    validateRequest({ paramsSchema: spaceIdParamSchema, bodySchema: parkingSpaceUpdateNumberSchema }),
     asyncHandler(async (req, res) => controller.updateParkingSpace(req, res))
   )
   .put(
