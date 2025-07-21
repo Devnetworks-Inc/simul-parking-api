@@ -49,7 +49,7 @@ router
   .delete(
     '/space/:spaceId',
     validateRequest({ paramsSchema: spaceIdParamSchema }),
-    asyncHandler(async (req, res) => controller.delete(req, res))
+    asyncHandler(async (req, res) => controller.deleteParkingSpace(req, res))
   )
   .delete(
     '/:id',
