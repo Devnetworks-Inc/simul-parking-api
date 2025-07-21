@@ -1,4 +1,4 @@
-const { format, startOfDay, endOfDay, compareAsc, addHours, differenceInMinutes } = require("date-fns");
+const { format, startOfDay, endOfDay, compareAsc, addHours, addMinutes, differenceInMinutes } = require("date-fns");
 const { ResponseHandler } = require("../../../libs/core/api-responses/response.handler");
 const { BookingDetailsEntity } = require("../../booking/schemas/booking.entity");
 const { ParkingEntity, ParkingSpaceEntity } = require("../../parking/schemas/parking.entity");
@@ -212,11 +212,13 @@ class ShuttleBookingController {
     const $or = [filter]
     if (route === 'airport-parking') {
       $or.push({
-        vehiclePickedUpDate: { $gte: addHours(today, -1) },
+        // vehiclePickedUpDate: { $gte: addHours(today, -1) },
+        vehiclePickedUpDate: { $gte: addMinutes(today, -10) },
       })
     } else {
       $or.push({
-        spaceNumberMarkedDate: { $gte: addHours(today, -1) },
+        // spaceNumberMarkedDate: { $gte: addHours(today, -1) },
+        spaceNumberMarkedDate: { $gte: addMinutes(today, -10) },
       })
     }
 
