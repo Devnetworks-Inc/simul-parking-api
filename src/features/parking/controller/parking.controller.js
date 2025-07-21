@@ -73,7 +73,7 @@ class ParkingController {
         }
 
         const updates = req.body
-        const updatedParkingSpace = await ParkingSpaceEntity.findByIdAndUpdate(id, updates, { returnDocument: 'after' }).lean()
+        const updatedParkingSpace = await ParkingSpaceEntity.findByIdAndUpdate(spaceId, updates, { returnDocument: 'after' }).lean()
         this._responseHandler.sendUpdated(res, updatedParkingSpace);
     }
 
