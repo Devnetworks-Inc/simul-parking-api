@@ -1,9 +1,16 @@
 const Joi = require('joi');
+const { idSchema } = require('../../../shared/schema');
 
 const parkingSpaceSchema = Joi.object({
   spaceNumber: Joi.string().required(),
   isOccupied: Joi.boolean().default(false),
   parkingId: Joi.string().required(),
+})
+
+const spaceIdParamSchema = Joi.object({
+  spaceId: idSchema.messages({
+    'string.pattern.base': 'Space Id must be a valid Object ID'
+  })
 })
 
 const parkingSchema = Joi.object({
@@ -43,4 +50,4 @@ const parkingSchema = Joi.object({
   ).unique('spaceNumber')
 });
 
-module.exports = { parkingSchema, parkingSpaceSchema };
+module.exports = { parkingSchema, parkingSpaceSchema, spaceIdParamSchema };

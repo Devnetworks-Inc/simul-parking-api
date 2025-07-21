@@ -2,7 +2,7 @@ const { Router } = require('express');
 const { asyncHandler } = require('../../../libs/core/handlers/async.handler');
 const { ParkingController } = require('../controller/parking.controller');
 const { validateRequest } = require('../../../middleware/validateRequest');
-const { parkingSchema, parkingSpaceSchema } = require('../validations/parking.validation');
+const { parkingSchema, parkingSpaceSchema, spaceIdParamSchema } = require('../validations/parking.validation');
 const { idParamSchema } = require('../../../shared/schema');
 const validateToken = require('../../../middleware/validateToken');
 
@@ -33,6 +33,11 @@ router
     asyncHandler(async (req, res) => controller.create(req, res))
   )
   .put(
+    '/space/:spaceId',
+    validateRequest({ paramsSchema: spaceIdParamSchema, bodySchema: parkingSpaceSchema }),
+    asyncHandler(async (req, res) => controller.updateParkingSpace(req, res))
+  )
+  .put(
     '/:id',
     validateRequest({ bodySchema: parkingSchema, paramsSchema: idParamSchema }),
     asyncHandler(async (req, res) => controller.update(req, res))
@@ -40,6 +45,11 @@ router
   .get(
     '/:id',
     asyncHandler(async (req, res) => controller.getById(req, res))
+  )
+  .delete(
+    '/space/:spaceId',
+    validateRequest({ paramsSchema: spaceIdParamSchema }),
+    asyncHandler(async (req, res) => controller.delete(req, res))
   )
   .delete(
     '/:id',

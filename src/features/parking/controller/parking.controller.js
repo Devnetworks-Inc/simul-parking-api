@@ -3,9 +3,10 @@ const { NotFoundError } = require("../../../libs/core/error/custom-error");
 const APP_MESSAGES = require("../../../shared/messages/app-messages");
 const { ParkingService } = require("../services/parking.service");
 const { ParkingAdapter } = require("../adapters/parking-adapter");
-const { ParkingEntity } = require("../schemas/parking.entity");
+const { ParkingEntity, ParkingSpaceEntity } = require("../schemas/parking.entity");
 const { RouteEntity } = require("../../timetable/schemas/route.entity");
 const { ShuttleBookingEntity } = require("../../shuttleBooking/schemas/shuttleBooking.entity");
+const { BookingDetailsEntity } = require("../../booking/schemas/booking.entity");
 
 class ParkingController {
     constructor() {
@@ -54,6 +55,27 @@ class ParkingController {
         const created = await this._service.createParkingSpace(parkingSpaceModel)
         this._responseHandler.sendCreated(res, created);
     }
+    
+    async updateParkingSpace(req, res) {
+        const spaceId = req.params.spaceId;
+        const parkingSpace = await ParkingSpaceEntity.findById(spaceId)
+
+        if (!parkingSpace) {
+            this._responseHandler.sendDynamicError(res, 'Parking Space does not exist', 404)
+            return
+        }
+
+        const isUsed = await BookingDetailsEntity.findOne({ parkingSpaceLocation: spaceId })
+
+        if (isUsed) {
+            this._responseHandler.sendDynamicError(res, 'Not allowed to update Parking Space that was already used', 405)
+            return
+        }
+
+        const updates = req.body
+        const updatedParkingSpace = await ParkingSpaceEntity.findByIdAndUpdate(id, updates, { returnDocument: 'after' }).lean()
+        this._responseHandler.sendUpdated(res, updatedParkingSpace);
+    }
 
     async update(req, res) {
         const id = req.params.id;
@@ -75,6 +97,27 @@ class ParkingController {
 
          // Delete associated routes
         await RouteEntity.deleteMany({ parking: id });
+
+        this._responseHandler.sendDeleted(res);
+    }
+
+    async deleteParkingSpace(req, res) {
+        const spaceId = req.params.spaceId;
+        const parkingSpace = await ParkingSpaceEntity.findById(spaceId)
+
+        if (!parkingSpace) {
+            this._responseHandler.sendDynamicError(res, 'Parking Space does not exist', 404)
+            return
+        }
+
+        const isUsed = await BookingDetailsEntity.findOne({ parkingSpaceLocation: spaceId })
+
+        if (isUsed) {
+            this._responseHandler.sendDynamicError(res, 'Not allowed to delete Parking Space that was already used', 405)
+            return
+        }
+        
+        await ParkingSpaceEntity.findByIdAndDelete(spaceId);
 
         this._responseHandler.sendDeleted(res);
     }
